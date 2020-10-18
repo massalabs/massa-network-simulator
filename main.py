@@ -3,8 +3,10 @@ import time
 
 
 def run():
+    print("initializing...")
+
     container_wrapper = ContainerWrapper()
-    
+
     image = container_wrapper.build_wrapper_image("./wrapper/")
 
     network = container_wrapper.create_network(
@@ -36,13 +38,21 @@ def run():
         cmd=["ping", "192.168.52.10"]
     )
 
+    print("starting...")
+
     container_wrapper.start_container(container1)
     container_wrapper.start_container(container2)
+
+    print("waiting...")
 
     time.sleep(3)
 
     print("\n".join(container_wrapper.get_logs(container1)))
     print("\n".join(container_wrapper.get_logs(container2)))
 
+    print("cleaning...")
+
+    del container_wrapper
+    print("finished")
 
 run()
