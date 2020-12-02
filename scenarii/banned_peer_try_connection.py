@@ -20,7 +20,7 @@ def banned_peer_try_connection(image, network, config_template, container_wrappe
         }
     ]
     config1 = deepcopy(config_template)
-    config1["protocol"]["network"]["routable_ip"] = ip1
+    config1["network"]["routable_ip"] = ip1
 
     peers2 = [
         {
@@ -33,7 +33,7 @@ def banned_peer_try_connection(image, network, config_template, container_wrappe
         }
     ]
     config2 = deepcopy(config_template)
-    config2["protocol"]["network"]["routable_ip"] = ip2
+    config2["network"]["routable_ip"] = ip2
 
     container1 = container_wrapper.create_container(
         image=image,
