@@ -1,4 +1,4 @@
 #!/bin/sh
 
-cd /massa-network && ./testnet
+cd /massa-network && ./massa_network
 
