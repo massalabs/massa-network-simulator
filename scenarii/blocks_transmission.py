@@ -80,15 +80,11 @@ def block_transmission(image, network, config_template, container_wrapper):
     container2.start()
     container3.start()
 
-    
-    
     log_parsers = [
         MassaTraceParser(container1.get_logs),
         MassaTraceParser(container2.get_logs),
         MassaTraceParser(container3.get_logs)
     ]
     print("\n".join(container1.get_logs()))
-
-
 
     raise ValueError("peers did not agree on the right peer list in time")
