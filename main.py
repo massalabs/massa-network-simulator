@@ -1,7 +1,7 @@
 from docker_wrapper import DockerWrapper as ContainerWrapper
 import gc
-from scenarii.ip_discovery import ip_discovery_scenario
-from scenarii.banned_peer_try_connection import banned_peer_try_connection
+from scenarios.ip_discovery import ip_discovery_scenario
+from scenarios.banned_peer_try_connection import banned_peer_try_connection
 
 
 def main():
