@@ -9,6 +9,7 @@ import warnings
 class DockerWrapper:
     def __init__(self):
         self.docker_client = docker.from_env()
+        self.containers = []
 
     def create_network(self, subnet: str, gateway_ip: str):
         return NetworkWrapper(self, subnet, gateway_ip)
@@ -17,7 +18,15 @@ class DockerWrapper:
         return ImageWrapper(self, wrapper_path)
 
     def create_container(self, image, network, files_dict: dict, ul_kbitps: int, ul_ms: int, ip: str, cmd: list):
-        return ContainerWrapper(self, image, network, files_dict, ul_kbitps, ul_ms, ip, cmd)
+        new_container = ContainerWrapper(
+            self, image, network, files_dict, ul_kbitps, ul_ms, ip, cmd)
+        self.containers.append(new_container)
+        return new_container
+
+    def delete_containers(self):
+        for itm in self.containers:
+            itm.delete()
+        self.containers.clear()
 
 
 class NetworkWrapper:
@@ -37,9 +46,14 @@ class NetworkWrapper:
         )
         self.id = self.network.id
 
+    def delete(self):
+        if self.network is not None:
+            self.network.remove()
+            self.network = None
+
     def __del__(self):
         try:
-            self.network.remove()
+            self.delete()
         except Exception as e:
             warnings.warn("failed removing network {}: {}".format(self.id, e))
 
@@ -47,13 +61,19 @@ class NetworkWrapper:
 class ImageWrapper:
     def __init__(self, wrapper: DockerWrapper, wrapper_path: str):
         self.wrapper = wrapper
-        image, _ = self.wrapper.docker_client.images.build(path=wrapper_path, rm=True)
+        image, _ = self.wrapper.docker_client.images.build(
+            path=wrapper_path, rm=True)
         self.image = image
         self.id = self.image.id
 
+    def delete(self):
+        if self.image is not None:
+            self.wrapper.docker_client.images.remove(self.id)
+            self.image = None
+
     def __del__(self):
         try:
-            self.wrapper.docker_client.images.remove(self.id)
+            self.delete()
         except Exception as e:
             warnings.warn("failed removing image {}: {}".format(self.id, e))
 
@@ -61,16 +81,16 @@ class ImageWrapper:
 class ContainerWrapper:
     def __init__(self, wrapper: DockerWrapper, image: ImageWrapper, network: NetworkWrapper,
                  files_dict: dict, ul_kbitps: int, ul_ms: int, ip: str, cmd: list):
-        self.wrapper = wrapper
-        result = self.wrapper.docker_client.api.create_container(
+
+        result = wrapper.docker_client.api.create_container(
             image.id,
             command=[str(ul_kbitps), str(ul_ms)] + cmd,
             detach=True,
-            host_config=self.wrapper.docker_client.api.create_host_config(
+            host_config=wrapper.docker_client.api.create_host_config(
                 cap_add=["NET_ADMIN"]
             ),
-            networking_config=self.wrapper.docker_client.api.create_networking_config({
-                network.id: self.wrapper.docker_client.api.create_endpoint_config(
+            networking_config=wrapper.docker_client.api.create_networking_config({
+                network.id: wrapper.docker_client.api.create_endpoint_config(
                     ipv4_address=str(ip),
                 )
             })
@@ -79,7 +99,7 @@ class ContainerWrapper:
         if warns:
             warnings.warn(warns)
         self.id = result["Id"]
-        self.container = self.wrapper.docker_client.containers.get(self.id)
+        self.container = wrapper.docker_client.containers.get(self.id)
 
         for file_path, file_bytes in files_dict.items():
             (file_dir, file_name) = os.path.split(file_path)
@@ -91,7 +111,8 @@ class ContainerWrapper:
             archive.close()
             archive_buffer.seek(0)
             if not self.container.put_archive(file_dir, archive_buffer.read()):
-                raise ValueError("failed adding file {} to container {}".format(file_path, self.id))
+                raise ValueError(
+                    "failed adding file {} to container {}".format(file_path, self.id))
 
     def start(self):
         self.container.start()
@@ -99,8 +120,14 @@ class ContainerWrapper:
     def get_logs(self, from_line=0):
         return self.container.logs().decode('utf-8').split("\n")[from_line:]
 
+    def delete(self):
+        if self.container is not None:
+            self.container.remove(force=True)
+            self.container = None
+
     def __del__(self):
         try:
-            self.container.remove(force=True)
+            self.delete()
         except Exception as e:
-            warnings.warn("failed removing container {}: {}".format(self.id, e))
+            warnings.warn(
+                "failed removing container {}: {}".format(self.id, e))
