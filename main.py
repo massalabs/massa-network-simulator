@@ -2,6 +2,7 @@ from docker_wrapper import DockerWrapper as ContainerWrapper
 import gc
 from scenarii.ip_discovery import ip_discovery_scenario
 from scenarii.banned_peer_try_connection import banned_peer_try_connection
+from scenarii.blocks_transmission import block_transmission
 
 
 def main():
@@ -42,6 +43,7 @@ def main():
 
     print("Running tests...")
     test_functions = {
+        "block_propagation": block_transmission,
         "ip_discovery_scenario": ip_discovery_scenario,
         "banned_peer_try_connection": banned_peer_try_connection,
     }
