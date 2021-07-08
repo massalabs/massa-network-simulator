@@ -95,7 +95,8 @@ def ip_discovery_scenario(image, network, config_template, container_wrapper):
     peers_set1 = get_peer_set(log1)
     peers_set2 = get_peer_set(log2)
 
-    if peers_set1 != peers_set2:
+    expected_set = {ip1, ip2, "169.202.0.10", "169.202.0.11", "169.202.0.12", "169.202.0.13"}
+    if peers_set1 != expected_set or peers_set2 != expected_set:
         raise ValueError
 
 
