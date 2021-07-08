@@ -80,19 +80,19 @@ class DockerWrapper:
             try:
                 target.remove(force=True)
             except Exception as e:
-                warnings.warn("\tfailed removing container {}: {}".format(target.id, e))
+                warnings.warn("failed removing container {}: {}".format(target.id, e))
         while self.networks:
             target = self.networks.pop()
             try:
                 target.remove()
             except Exception as e:
-                warnings.warn("\tfailed removing network {}: {}".format(target.id, e))
+                warnings.warn("failed removing network {}: {}".format(target.id, e))
         while self.images:
             target = self.images.pop()
             try:
                 self.docker_client.images.remove(target.id)
             except Exception as e:
-                warnings.warn("\tfailed removing image {}: {}".format(target.id, e))
+                warnings.warn("failed removing image {}: {}".format(target.id, e))
 
     def __del__(self):
         self.cleanup()
