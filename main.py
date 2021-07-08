@@ -29,6 +29,7 @@ def run():
                 "routable_ip": None,
                 "protocol_port": 50000,
                 "connect_timeout": {"secs": 5, "nanos": 0},
+                "wakeup_interval": {"secs": 10, "nanos": 0},
                 "peers_file": "config/peers.json",
                 "target_out_connections": 20,
                 "max_in_connections": 100,
