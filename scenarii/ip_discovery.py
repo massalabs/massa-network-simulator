@@ -26,7 +26,7 @@ def ip_discovery_scenario(image, network, config_template, container_wrapper):
         }
     ]
     config1 = deepcopy(config_template)
-    config1["protocol"]["network"]["routable_ip"] = ip1
+    config1["network"]["routable_ip"] = ip1
 
     ip2 = "169.202.0.3"
     peers2 = [
@@ -56,7 +56,7 @@ def ip_discovery_scenario(image, network, config_template, container_wrapper):
         }
     ]
     config2 = deepcopy(config_template)
-    config2["protocol"]["network"]["routable_ip"] = ip2
+    config2["network"]["routable_ip"] = ip2
 
     ip3 = "169.202.0.4"
     peers3 = [
@@ -86,7 +86,7 @@ def ip_discovery_scenario(image, network, config_template, container_wrapper):
         }
     ]
     config3 = deepcopy(config_template)
-    config3["protocol"]["network"]["routable_ip"] = ip3
+    config3["network"]["routable_ip"] = ip3
 
     container1 = container_wrapper.create_container(
         image=image,
