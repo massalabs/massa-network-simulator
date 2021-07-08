@@ -9,21 +9,21 @@ import warnings
 class DockerWrapper:
     def __init__(self):
         self.docker_client = docker.from_env()
-        self.images = []
-        self.networks = []
-        self.containers = []
 
-    @staticmethod
-    def get_logs(container, from_line=0):
-        return container.logs().decode('utf-8').split("\n")[from_line:]
+    def create_network(self, subnet: str, gateway_ip: str):
+        return NetworkWrapper(self, subnet, gateway_ip)
 
-    def build_wrapper_image(self, wrapper_path):
-        image, _ = self.docker_client.images.build(path=wrapper_path, rm=True)
-        self.images.append(image)
-        return image
+    def create_image(self, wrapper_path: str):
+        return ImageWrapper(self, wrapper_path)
 
-    def create_network(self, subnet, gateway_ip):
-        result = self.docker_client.networks.create(
+    def create_container(self, image, network, files_dict: dict, ul_kbitps: int, ul_ms: int, ip: str, cmd: list):
+        return ContainerWrapper(self, image, network, files_dict, ul_kbitps, ul_ms, ip, cmd)
+
+
+class NetworkWrapper:
+    def __init__(self, wrapper: DockerWrapper, subnet: str, gateway_ip: str):
+        self.wrapper = wrapper
+        self.network = self.wrapper.docker_client.networks.create(
             name="br0sim",
             driver="bridge",
             ipam=docker.types.IPAMConfig(
@@ -35,19 +35,42 @@ class DockerWrapper:
                 ]
             )
         )
-        self.networks.append(result)
-        return result
+        self.id = self.network.id
 
-    def create_container(self, image, files_dict, network, ul_kbitps, ul_ms, ip, cmd):
-        result = self.docker_client.api.create_container(
+    def __del__(self):
+        try:
+            self.network.remove()
+        except Exception as e:
+            warnings.warn("failed removing network {}: {}".format(self.id, e))
+
+
+class ImageWrapper:
+    def __init__(self, wrapper: DockerWrapper, wrapper_path: str):
+        self.wrapper = wrapper
+        image, _ = self.wrapper.docker_client.images.build(path=wrapper_path, rm=True)
+        self.image = image
+        self.id = self.image.id
+
+    def __del__(self):
+        try:
+            self.wrapper.docker_client.images.remove(self.id)
+        except Exception as e:
+            warnings.warn("failed removing image {}: {}".format(self.id, e))
+
+
+class ContainerWrapper:
+    def __init__(self, wrapper: DockerWrapper, image: ImageWrapper, network: NetworkWrapper,
+                 files_dict: dict, ul_kbitps: int, ul_ms: int, ip: str, cmd: list):
+        self.wrapper = wrapper
+        result = self.wrapper.docker_client.api.create_container(
             image.id,
-            command=[str(ul_kbitps), str(ul_ms)] + list(cmd),
+            command=[str(ul_kbitps), str(ul_ms)] + cmd,
             detach=True,
-            host_config=self.docker_client.api.create_host_config(
+            host_config=self.wrapper.docker_client.api.create_host_config(
                 cap_add=["NET_ADMIN"]
             ),
-            networking_config=self.docker_client.api.create_networking_config({
-                network.id: self.docker_client.api.create_endpoint_config(
+            networking_config=self.wrapper.docker_client.api.create_networking_config({
+                network.id: self.wrapper.docker_client.api.create_endpoint_config(
                     ipv4_address=str(ip),
                 )
             })
@@ -55,8 +78,9 @@ class DockerWrapper:
         warns = result.get("Warnings")
         if warns:
             warnings.warn(warns)
-        container = self.docker_client.containers.get(result["Id"])
-        self.containers.append(container)
+        self.id = result["Id"]
+        self.container = self.wrapper.docker_client.containers.get(self.id)
+
         for file_path, file_bytes in files_dict.items():
             (file_dir, file_name) = os.path.split(file_path)
             archive_buffer = BytesIO()
@@ -66,33 +90,17 @@ class DockerWrapper:
             archive.addfile(tarinfo=file_info, fileobj=BytesIO(file_bytes))
             archive.close()
             archive_buffer.seek(0)
-            if not container.put_archive(file_dir, archive_buffer.read()):
-                raise ValueError("failed adding file {} to container {}".format(file_path, container.id))
-        return container
+            if not self.container.put_archive(file_dir, archive_buffer.read()):
+                raise ValueError("failed adding file {} to container {}".format(file_path, self.id))
 
-    @staticmethod
-    def start_container(container):
-        container.start()
+    def start(self):
+        self.container.start()
 
-    def cleanup(self):
-        while self.containers:
-            target = self.containers.pop()
-            try:
-                target.remove(force=True)
-            except Exception as e:
-                warnings.warn("failed removing container {}: {}".format(target.id, e))
-        while self.networks:
-            target = self.networks.pop()
-            try:
-                target.remove()
-            except Exception as e:
-                warnings.warn("failed removing network {}: {}".format(target.id, e))
-        while self.images:
-            target = self.images.pop()
-            try:
-                self.docker_client.images.remove(target.id)
-            except Exception as e:
-                warnings.warn("failed removing image {}: {}".format(target.id, e))
+    def get_logs(self, from_line=0):
+        return self.container.logs().decode('utf-8').split("\n")[from_line:]
 
     def __del__(self):
-        self.cleanup()
+        try:
+            self.container.remove(force=True)
+        except Exception as e:
+            warnings.warn("failed removing container {}: {}".format(self.id, e))

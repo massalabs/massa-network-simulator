@@ -10,7 +10,7 @@ def run():
 
     container_wrapper = ContainerWrapper()
 
-    image = container_wrapper.build_wrapper_image("./wrapper/")
+    image = container_wrapper.create_image("./wrapper/")
 
     network = container_wrapper.create_network(
         subnet="169.202.0.0/16",
@@ -122,23 +122,27 @@ def run():
 
     print("starting...")
 
-    container_wrapper.start_container(container1)
-    container_wrapper.start_container(container2)
+    container1.start()
+    container2.start()
 
     print("waiting...")
 
     time.sleep(10)
 
     print("========== CONTAINER 1 ==========")
-    print("\n".join(container_wrapper.get_logs(container1)))
+    print("\n".join(container1.get_logs()))
     print("=================================\n")
     print("========== CONTAINER 2 ==========")
-    print("\n".join(container_wrapper.get_logs(container2)))
+    print("\n".join(container2.get_logs()))
     print("=================================\n")
 
     print("cleaning...")
-
+    del container1
+    del container2
+    del network
+    del image
     del container_wrapper
+
     print("finished")
 
 
