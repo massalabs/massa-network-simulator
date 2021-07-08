@@ -73,8 +73,7 @@ def banned_peer_try_connection(image, network, config_template, container_wrappe
         for container_i, log_parser in enumerate(log_parsers):
             for log_entry in log_parser.get_trace_logs():
                 if container_i == 0 \
-                        and log_entry.get("origin", "").endswith("::PeerInfoDatabase::try_new_in_connection") \
-                        and log_entry.get("event") == "peer_banned" \
+                        and log_entry.get("event") == "in_connection_refused_peer_banned" \
                         and log_entry.get("parameters", {}).get("ip") == ip2:
                     return
 
