@@ -38,7 +38,19 @@ def main():
             "message_timeout": {"secs": 5, "nanos": 0},
             "ask_peer_list_interval": {"secs": 2, "nanos": 0}
         },
-        "consensus": dict()
+        "consensus":{
+            "genesis_timestamp_millis" : 1607958448000,
+            "t0_millis" : 16000,
+            "thread_count" : 2,
+            "selection_rng_seed" :  42,
+            "genesis_key" : 'SGoTK5TJ9ZcCgQVmdfma88UdhS6GK94aFEYAsU3F1inFayQ6S',
+            "nodes" : [
+                ['4vYrPNzUM8PKg2rYPW3ZnXPzy67j9fn5WsGCbnwAnk2Lf7jNHb','LGXe9RrR1QNSsSn8bAEgrsYM8WwX67oHLjGj6e19bCW9ZKo6p'],
+                ['6ZoZ46HVJMKVTU92a1QRQqWpERL5tTAJ4RjazPBRzFXLmMDu8g','PZZzhDKrdGiuQMGEazTGP5b164qofYXh9Yp4SQ4uZChxAQqtK'],
+                ['54VEbD2R2HkUz2G5NGHyxhaFDhrQFG62UqFLWsUywnHtDsM8qh','2eLQSjhrep9Grw7yDifXnDKgCc1WTXBCtdeREzuJd9jiSZuZmr']
+            ],
+            "current_node_index" : 0
+        }
     }
 
     print("Running tests...")
