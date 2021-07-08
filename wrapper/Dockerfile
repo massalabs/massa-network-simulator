@@ -5,8 +5,8 @@ RUN apk add --no-cache iproute2
 COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-COPY ./testnet /massa-network/testnet
-RUN chmod +x /massa-network/testnet
+COPY ./massa_network /massa-network/massa_network
+RUN chmod +x /massa-network/massa_network
 
 RUN mkdir /massa-network/config
 
