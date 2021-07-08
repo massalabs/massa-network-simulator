@@ -43,7 +43,7 @@ def main():
     print("Running tests...")
     test_functions = {
         "ip_discovery_scenario": ip_discovery_scenario,
-        "banned peer try connection": banned_peer_try_connection,
+        "banned_peer_try_connection": banned_peer_try_connection,
     }
     results = dict()
     n_run, n_success = 0, 0
@@ -56,7 +56,7 @@ def main():
             print("Test", test_name, "PASSED ヾ(＾-＾)ノ")
         except Exception as e:
             results[test_name] = {"ok": False, "exception": e}
-            print("Test", test_name, " (╯︵╰,) FAILED =>", e)
+            print("Test", test_name, "FAILED (╯︵╰,) =>", e)
         finally:
             container_wrapper.delete_containers()
             gc.collect()
