@@ -4,7 +4,9 @@ import time
 
 def run():
     container_wrapper = ContainerWrapper()
+    
     image = container_wrapper.build_wrapper_image("./wrapper/")
+
     network = container_wrapper.create_network(
         subnet="192.168.52.0/24",
         gateway_ip="192.168.52.254"
