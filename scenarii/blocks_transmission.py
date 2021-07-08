@@ -125,25 +125,35 @@ def block_transmission(image, network, config_template, container_wrapper):
                             block["header"]["thread_number"],
                             block["signature"][:5]
                         ]
+                        if "hash" in log_entry["parameters"]:
+                            line.append(
+                                log_entry["parameters"]["hash"][:5])
+                        else:
+                            line.append("-")
+
                         if "source_node_id" in log_entry["parameters"]:
                             line.append(
-                                log_entry["parameters"]["source_node_id"])
+                                log_entry["parameters"]["source_node_id"][:5])
                         else:
                             line.append("-")
                         res.append(line)
 
-    df = pd.DataFrame(res, columns=[
-        'Date',
-        'Node_number',
-        'Event',
-        'Creator',
-        'Parent_0',
-        'Parent_1',
-        'Slot_number',
-        'Thread_number',
-        'Signature',
-        'Source_node_id'
-    ])
+    columns=[
+            'Date',
+            'Node_number',
+            'Event',
+            'Creator',
+            'Parent_0',
+            'Parent_1',
+            'Slot_number',
+            'Thread_number',
+            'Signature',
+            'Block_hash',
+            'Source_node_id'
+        ]
+    print(len(res[0]))
+    print(len(columns))
+    df = pd.DataFrame(res, columns=columns)
 
     print(df)
     df.to_csv("output.csv")
