@@ -2,7 +2,7 @@ from copy import deepcopy
 import toml
 import json
 import time
-from scenarii.trace_parser import MassaTraceParser
+from scenarios.trace_parser import MassaTraceParser
 
 
 def ip_discovery_scenario(image, network, config_template, container_wrapper):
