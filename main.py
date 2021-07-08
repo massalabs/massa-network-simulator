@@ -1,17 +1,12 @@
 from docker_wrapper import DockerWrapper as ContainerWrapper
-import time
-import toml
-import json
-from copy import deepcopy
+import gc
+from scenarii.ip_discovery import ip_discovery_scenario
 
 
-def run():
-    print("initializing...")
-
+def main():
+    print("Initializing...")
     container_wrapper = ContainerWrapper()
-
     image = container_wrapper.create_image("./wrapper/")
-
     network = container_wrapper.create_network(
         subnet="169.202.0.0/16",
         gateway_ip="169.202.0.254"
@@ -43,108 +38,35 @@ def run():
         }
     }
 
-    ip1 = "169.202.0.2"
-    peers1 = [
-        {
-            "ip": "169.202.0.10",
-            "banned": False,
-            "bootstrap": False,
-            "last_alive": None,
-            "last_failure": None,
-            "advertised": True
-        },
-        {
-            "ip": "169.202.0.11",
-            "banned": False,
-            "bootstrap": False,
-            "last_alive": None,
-            "last_failure": None,
-            "advertised": True
-        }
-    ]
-    config1 = deepcopy(config_template)
-    config1["protocol"]["network"]["routable_ip"] = ip1
+    print("Running tests...")
+    test_functions = {
+        "ip_discovery_scenario": ip_discovery_scenario,
+        "test_2": ip_discovery_scenario,
+    }
+    results = dict()
+    n_run, n_success = 0, 0
+    for test_name, test_function in test_functions.items():
+        n_run += 1
+        try:
+            test_function(image, network, config_template, container_wrapper)
+            results[test_name] = {"ok": True}
+            n_success += 1
+            print("Test", test_name, "PASSED ヾ(＾-＾)ノ")
+        except Exception as e:
+            results[test_name] = {"ok": False, "exception": e}
+            print("Test", test_name, "FAILED =>", e)
+        finally:
+            gc.collect()
 
-    ip2 = "169.202.0.3"
-    peers2 = [
-        {
-            "ip": ip1,
-            "banned": False,
-            "bootstrap": False,
-            "last_alive": None,
-            "last_failure": None,
-            "advertised": True
-        },
-        {
-            "ip": "169.202.0.12",
-            "banned": False,
-            "bootstrap": False,
-            "last_alive": None,
-            "last_failure": None,
-            "advertised": True
-        },
-        {
-            "ip": "169.202.0.13",
-            "banned": False,
-            "bootstrap": False,
-            "last_alive": None,
-            "last_failure": None,
-            "advertised": True
-        }
-    ]
-    config2 = deepcopy(config_template)
-    config2["protocol"]["network"]["routable_ip"] = ip2
-
-    container1 = container_wrapper.create_container(
-        image=image,
-        files_dict={
-            "/massa-network/config/config.toml": toml.dumps(config1).encode("utf-8"),
-            "/massa-network/config/peers.json": json.dumps(peers1).encode("utf-8")
-        },
-        network=network,
-        ul_kbitps=100,
-        ul_ms=100,
-        ip=ip1,
-        cmd=["/massa-network/run.sh"]
-    )
-
-    container2 = container_wrapper.create_container(
-        image=image,
-        files_dict={
-            "/massa-network/config/config.toml": toml.dumps(config2).encode("utf-8"),
-            "/massa-network/config/peers.json": json.dumps(peers2).encode("utf-8")
-        },
-        network=network,
-        ul_kbitps=100,
-        ul_ms=100,
-        ip=ip2,
-        cmd=["/massa-network/run.sh"]
-    )
-
-    print("starting...")
-
-    container1.start()
-    container2.start()
-
-    print("waiting...")
-
-    time.sleep(10)
-
-    print("========== CONTAINER 1 ==========")
-    print("\n".join(container1.get_logs()))
-    print("=================================\n")
-    print("========== CONTAINER 2 ==========")
-    print("\n".join(container2.get_logs()))
-    print("=================================\n")
-
-    print("cleaning...")
-    del container1
-    del container2
+    print("Cleanup...")
     del network
     del image
     del container_wrapper
+    gc.collect()
 
-    print("finished")
+    print("Finished:", n_success, "/", n_run, "tests succeeded")
+    exit((0 if n_success == n_run else 1))
 
 
-run()
+if __name__ == "__main__":
+    main()
