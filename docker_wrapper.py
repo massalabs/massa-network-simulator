@@ -84,7 +84,7 @@ class ContainerWrapper:
                  files_dict: dict, ul_kbitps: int, ul_ms: int, ip: str, cmd: list):
 
         result = wrapper.docker_client.api.create_container(
-            "2e75b5856eb4",
+            "massa-test",
             command=[str(ul_kbitps), str(ul_ms)] + cmd,
             detach=True,
             host_config=wrapper.docker_client.api.create_host_config(

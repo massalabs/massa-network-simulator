@@ -15,7 +15,7 @@ def main():
 
     config_template = {
         "logging": {
-            "level": 6,
+            "level": 4,
         },
         "network": {
             "bind": "0.0.0.0:50000",
