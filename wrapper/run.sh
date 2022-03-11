@@ -1,4 +1,3 @@
 #!/bin/sh
 
-cd /massa-network && ./massa_network
-
+cd /massa/massa-node && ../target/debug/massa-node

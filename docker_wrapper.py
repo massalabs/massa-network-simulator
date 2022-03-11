@@ -61,15 +61,16 @@ class NetworkWrapper:
 class ImageWrapper:
     def __init__(self, wrapper: DockerWrapper, wrapper_path: str):
         self.wrapper = wrapper
-        image, _ = self.wrapper.docker_client.images.build(
-            path=wrapper_path, rm=True)
-        self.image = image
-        self.id = self.image.id
+        #image, _ = self.wrapper.docker_client.images.build(
+        #    path=wrapper_path, tag="massa-test") # rm=True
+        #self.image = image
+        #self.id = self.image.id
 
     def delete(self):
-        if self.image is not None:
-            self.wrapper.docker_client.images.remove(self.id)
-            self.image = None
+        self.image = None
+#        if self.image is not None:
+#            self.wrapper.docker_client.images.remove(self.id)
+#            self.image = None
 
     def __del__(self):
         try:
@@ -83,7 +84,7 @@ class ContainerWrapper:
                  files_dict: dict, ul_kbitps: int, ul_ms: int, ip: str, cmd: list):
 
         result = wrapper.docker_client.api.create_container(
-            image.id,
+            "2e75b5856eb4",
             command=[str(ul_kbitps), str(ul_ms)] + cmd,
             detach=True,
             host_config=wrapper.docker_client.api.create_host_config(

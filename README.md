@@ -11,5 +11,5 @@ pip3 install docker toml
 
 How to use:
 
-* ensure that the network-simulator project folder lies alongside the massa-network one in the same path
+* ensure that the network-simulator project folder lies alongside the massa one in the same path
 * call ./run.sh from the network-simulator folder

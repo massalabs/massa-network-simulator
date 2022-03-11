@@ -91,40 +91,40 @@ def ip_discovery_scenario(image, network, config_template, container_wrapper):
     container1 = container_wrapper.create_container(
         image=image,
         files_dict={
-            "/massa-network/config/config.toml": toml.dumps(config1).encode("utf-8"),
-            "/massa-network/config/peers.json": json.dumps(peers1).encode("utf-8")
+            "/massa/massa-node/config/config.toml": toml.dumps(config1).encode("utf-8"),
+            "/massa/massa-node/config/peers.json": json.dumps(peers1).encode("utf-8")
         },
         network=network,
         ul_kbitps=100,
         ul_ms=100,
         ip=ip1,
-        cmd=["/massa-network/run.sh"]
+        cmd=["/massa/run.sh"]
     )
 
     container2 = container_wrapper.create_container(
         image=image,
         files_dict={
-            "/massa-network/config/config.toml": toml.dumps(config2).encode("utf-8"),
-            "/massa-network/config/peers.json": json.dumps(peers2).encode("utf-8")
+            "/massa/massa-node/config/config.toml": toml.dumps(config2).encode("utf-8"),
+            "/massa/massa-node/config/peers.json": json.dumps(peers2).encode("utf-8")
         },
         network=network,
         ul_kbitps=100,
         ul_ms=100,
         ip=ip2,
-        cmd=["/massa-network/run.sh"]
+        cmd=["/massa/run.sh"]
     )
 
     container3 = container_wrapper.create_container(
         image=image,
         files_dict={
-            "/massa-network/config/config.toml": toml.dumps(config3).encode("utf-8"),
-            "/massa-network/config/peers.json": json.dumps(peers3).encode("utf-8")
+            "/massa/massa-node/config/config.toml": toml.dumps(config3).encode("utf-8"),
+            "/massa/massa-node/config/peers.json": json.dumps(peers3).encode("utf-8")
         },
         network=network,
         ul_kbitps=100,
         ul_ms=100,
         ip=ip3,
-        cmd=["/massa-network/run.sh"]
+        cmd=["/massa/run.sh"]
     )
 
     container1.start()
@@ -144,6 +144,7 @@ def ip_discovery_scenario(image, network, config_template, container_wrapper):
         time.sleep(1)
         for container_i, log_parser in enumerate(log_parsers):
             for log_entry in log_parser.get_trace_logs():
+                print(log_entry)
                 if log_entry.get("event") == "merge_incoming_peer_list":
                     peer_sets[container_i] = set(log_entry["parameters"]["ips"])
         if all([peer_set == expected_peer_set for peer_set in peer_sets]):

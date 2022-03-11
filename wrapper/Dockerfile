@@ -1,17 +1,23 @@
-FROM rustlang/rust:nightly-alpine
+FROM rustlang/rust:nightly
 
-RUN apk add --no-cache iproute2
+RUN apt-get install  iproute2
+RUN apt-get install git
+
+ARG GIT_URL=https://github.com/massalabs/massa.git
+
+# clone the repo
+RUN git clone "$GIT_URL" massa
+
+# build node
+RUN cd massa/massa-node && cargo build --features sandbox
 
 COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-COPY ./massa_network /massa-network/massa_network
-RUN chmod +x /massa-network/massa_network
+RUN chmod +x /massa/target/debug/massa-node
 
-RUN mkdir /massa-network/config
-
-COPY ./run.sh /massa-network/run.sh
-RUN chmod +x /massa-network/run.sh
+COPY ./run.sh /massa/run.sh
+RUN chmod +x /massa/run.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 
