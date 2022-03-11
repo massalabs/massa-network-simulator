@@ -20,8 +20,10 @@ class MassaTraceParser:
 
     @staticmethod
     def _parse_trace_log(log_line):
+        #Remove color string
+        log_line = re.sub(r'\x1b\[\d+m', '', log_line)
         match_result = re.match(
-            r"^(?P<date>[0-9\-.:+T]{19,50}) - TRACE - massa_trace:(?P<message>.*)$", log_line)
+            r"(?P<date>(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}(?:\.\d+)?))(Z|[\+-]\d{2}:\d{2})? TRACE massa_network::network_worker: massa:peer_list_received:(?P<message>.*)$", log_line)
         if match_result is None:
             return None
         # noinspection PyBroadException

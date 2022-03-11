@@ -140,14 +140,16 @@ def ip_discovery_scenario(image, network, config_template, container_wrapper):
         MassaTraceParser(container3.get_logs)
     ]
     peer_sets = [set(), set(), set()]
-    for _ in range(10):
+    for _ in range(20):
         time.sleep(1)
         for container_i, log_parser in enumerate(log_parsers):
             for log_entry in log_parser.get_trace_logs():
-                print(log_entry)
-                if log_entry.get("event") == "merge_incoming_peer_list":
-                    peer_sets[container_i] = set(log_entry["parameters"]["ips"])
+                print(log_entry.get("ips"))
+                if log_entry.get("ips"):
+                    peer_sets[container_i] = set(log_entry["ips"])
         if all([peer_set == expected_peer_set for peer_set in peer_sets]):
             return
-
+    
+    print(peer_sets)
+    print(expected_peer_set)
     raise ValueError("peers did not agree on the right peer list in time")
