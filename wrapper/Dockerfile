@@ -6,7 +6,7 @@ RUN apt-get install git
 ARG GIT_URL=https://github.com/massalabs/massa.git
 
 # clone the repo
-RUN git clone -b add_env_variable_config_sandbox "$GIT_URL" massa
+RUN git clone "$GIT_URL" massa
 
 COPY ./setup.py /setup.py
 
