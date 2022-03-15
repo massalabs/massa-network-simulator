@@ -15,9 +15,9 @@ class DockerWrapper:
     def create_network(self, subnet: str, gateway_ip: str):
         return NetworkWrapper(self, subnet, gateway_ip)
 
-    def create_container(self, network, files_dict: dict, ul_kbitps: int, ul_ms: int, ip: str, cmd: list, environment: dict):
+    def create_container(self, network, files_dict: dict, ul_kbitps: int, ul_ms: int, ip: str, cmd: list, environment: dict, ports: dict):
         new_container = ContainerWrapper(
-            self, network, files_dict, ul_kbitps, ul_ms, ip, cmd, environment)
+            self, network, files_dict, ul_kbitps, ul_ms, ip, cmd, environment, ports)
         self.containers.append(new_container)
         return new_container
 
@@ -58,22 +58,26 @@ class NetworkWrapper:
 
 class ContainerWrapper:
     def __init__(self, wrapper: DockerWrapper, network: NetworkWrapper,
-                 files_dict: dict, ul_kbitps: int, ul_ms: int, ip: str, cmd: list, environment: dict):
-
+                 files_dict: dict, ul_kbitps: int, ul_ms: int, ip: str, cmd: list, environment: dict, ports: dict):
+        print(environment)
+        print(ports)
         result = wrapper.docker_client.api.create_container(
             "massa-simulator",
             command=[str(ul_kbitps), str(ul_ms)] + cmd,
             detach=True,
             host_config=wrapper.docker_client.api.create_host_config(
-                cap_add=["NET_ADMIN"]
+                cap_add=["NET_ADMIN"],
+                port_bindings=ports,
             ),
             networking_config=wrapper.docker_client.api.create_networking_config({
                 network.id: wrapper.docker_client.api.create_endpoint_config(
                     ipv4_address=str(ip),
                 )
             }),
-            environment=environment
+            environment=environment,
+            ports=[33035]
         )
+        print("created")
         warns = result.get("Warnings")
         if warns:
             warnings.warn(warns)

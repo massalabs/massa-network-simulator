@@ -8,6 +8,7 @@
         "initial_rolls": 100,
         "initial_ledger_balance": 250000000,
         "initial_sce_ledger_balance": 100000000,
+        "port": 33035,
         "bootstrap_server": true
     },
     {
@@ -19,6 +20,7 @@
         "initial_rolls": 100,
         "initial_ledger_balance": 250000000,
         "initial_sce_ledger_balance": 100000000,
+        "port": 33036,
         "bootstrap_server": true
     },
     {
@@ -30,6 +32,7 @@
         "initial_rolls": 100,
         "initial_ledger_balance": 250000000,
         "initial_sce_ledger_balance": 100000000,
+        "port": 33037,
         "bootstrap_server": true
     }
 ]

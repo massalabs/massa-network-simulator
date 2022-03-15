@@ -18,7 +18,7 @@ if __name__ == "__main__":
         "advertised": True,
         "banned": False,
         "bootstrap": True,
-        "peer_type": "Bootstrap", # Make it customizable
+        "peer_type": "Bootstrap" if p["bootstrap_server"] == True else "Standard",
         "ip": p["ip"],
         "last_alive": None,
         "last_failure": None
