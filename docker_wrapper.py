@@ -4,6 +4,7 @@ import os
 from io import BytesIO
 import tarfile
 import warnings
+import re
 
 
 class DockerWrapper:
@@ -84,7 +85,7 @@ class ContainerWrapper:
                  files_dict: dict, ul_kbitps: int, ul_ms: int, ip: str, cmd: list):
 
         result = wrapper.docker_client.api.create_container(
-            "massa-test",
+            "massa-simulator",
             command=[str(ul_kbitps), str(ul_ms)] + cmd,
             detach=True,
             host_config=wrapper.docker_client.api.create_host_config(
@@ -119,7 +120,10 @@ class ContainerWrapper:
         self.container.start()
 
     def get_logs(self, from_line=0):
-        return self.container.logs().decode('utf-8').split("\n")[from_line:]
+        logs = self.container.logs().decode('utf-8').split("\n")[from_line:]
+        for log_line in logs:
+            log_line = re.sub(r'\x1b\[\d+m', '', log_line)
+        return logs
 
     def delete(self):
         if self.container is not None:

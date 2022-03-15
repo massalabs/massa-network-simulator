@@ -1,3 +1,3 @@
 #!/bin/sh
 
-cd /massa/massa-node && ../target/debug/massa-node
+python3 config.py && cd /massa/massa-node && RUST_BACKTRACE=full ../target/release/massa-node && sleep 30
