@@ -15,12 +15,9 @@ class DockerWrapper:
     def create_network(self, subnet: str, gateway_ip: str):
         return NetworkWrapper(self, subnet, gateway_ip)
 
-    def create_image(self, wrapper_path: str):
-        return ImageWrapper(self, wrapper_path)
-
-    def create_container(self, image, network, files_dict: dict, ul_kbitps: int, ul_ms: int, ip: str, cmd: list):
+    def create_container(self, network, files_dict: dict, ul_kbitps: int, ul_ms: int, ip: str, cmd: list):
         new_container = ContainerWrapper(
-            self, image, network, files_dict, ul_kbitps, ul_ms, ip, cmd)
+            self, network, files_dict, ul_kbitps, ul_ms, ip, cmd)
         self.containers.append(new_container)
         return new_container
 
@@ -59,29 +56,8 @@ class NetworkWrapper:
             warnings.warn("failed removing network {}: {}".format(self.id, e))
 
 
-class ImageWrapper:
-    def __init__(self, wrapper: DockerWrapper, wrapper_path: str):
-        self.wrapper = wrapper
-        #image, _ = self.wrapper.docker_client.images.build(
-        #    path=wrapper_path, tag="massa-test") # rm=True
-        #self.image = image
-        #self.id = self.image.id
-
-    def delete(self):
-        self.image = None
-#        if self.image is not None:
-#            self.wrapper.docker_client.images.remove(self.id)
-#            self.image = None
-
-    def __del__(self):
-        try:
-            self.delete()
-        except Exception as e:
-            warnings.warn("failed removing image {}: {}".format(self.id, e))
-
-
 class ContainerWrapper:
-    def __init__(self, wrapper: DockerWrapper, image: ImageWrapper, network: NetworkWrapper,
+    def __init__(self, wrapper: DockerWrapper, network: NetworkWrapper,
                  files_dict: dict, ul_kbitps: int, ul_ms: int, ip: str, cmd: list):
 
         result = wrapper.docker_client.api.create_container(

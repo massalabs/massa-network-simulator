@@ -8,9 +8,6 @@ ARG GIT_URL=https://github.com/massalabs/massa.git
 # clone the repo
 RUN git clone -b add_env_variable_config_sandbox "$GIT_URL" massa
 
-COPY ./initial_ledger.json /massa/massa-node/base_config/initial_ledger.json
-COPY ./initial_rolls.json /massa/massa-node/base_config/initial_rolls.json
-COPY ./initial_sce_ledger.json /massa/massa-node/base_config/initial_sce_ledger.json
 COPY ./setup.py /setup.py
 
 RUN apt update
@@ -33,6 +30,9 @@ RUN chmod +x /massa/run.sh
 COPY ./config.py /config.py
 
 RUN echo "[]" > /massa/massa-node/base_config/initial_peers.json
+RUN echo "" > /massa/massa-node/base_config/initial_ledger.json
+RUN echo "" > /massa/massa-node/base_config/initial_sce_ledger.json
+RUN echo "" > /massa/massa-node/base_config/initial_rolls.json
 
 ENTRYPOINT ["/entrypoint.sh"]
 

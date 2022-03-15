@@ -4,6 +4,10 @@
         "node_privkey": "JqsRffwf4MEsjUKFv2vn2kXGVEr2Jcuit3ooMEkjyh6ZW7yzg",
         "node_pubkey": "5Zk6UFsghwqjaGRMG6abZjkoGjoZ5bU1H91UWeVqpU7XwjVcEo",
         "staking_privkey": "JqsRffwf4MEsjUKFv2vn2kXGVEr2Jcuit3ooMEkjyh6ZW7yzg",
+        "address": "2KziQHMiHmmU3juWPvCYQr1hV3ns8NkXaV3WKH6wV3jycD7SVE",
+        "initial_rolls": 100,
+        "initial_ledger_balance": 250000000,
+        "initial_sce_ledger_balance": 100000000,
         "bootstrap_server": true
     },
     {
@@ -11,6 +15,10 @@
         "node_privkey": "25g9fxCuEas213kDVRrs7WLSMiF5dUT2TosCxd4kNQyhpgoU4U",
         "node_pubkey": "7TARBHWkzWoZte1nFDT4qm8xbLYgrAXZDLEBLyUHMg3HhoJTZ7",
         "staking_privkey": "25g9fxCuEas213kDVRrs7WLSMiF5dUT2TosCxd4kNQyhpgoU4U",
+        "address": "2eyDebybmCkXV468gsF95vyL24jAbBicMxiPfaxBmFq9LXXZFg",
+        "initial_rolls": 100,
+        "initial_ledger_balance": 250000000,
+        "initial_sce_ledger_balance": 100000000,
         "bootstrap_server": true
     },
     {
@@ -18,6 +26,10 @@
         "node_privkey": "2PmbqtrDNRHbP9dgKPLPrDKu5Uz8g8jmrenPK2vw5a92fh54qE",
         "node_pubkey": "8BXQqdhG62VwWYm83vKrDKM1a3eSRz2yhTxP7J4HbC456KYK3b",
         "staking_privkey": "2PmbqtrDNRHbP9dgKPLPrDKu5Uz8g8jmrenPK2vw5a92fh54qE",
+        "address": "2DXaEAzgsmB7TRfuu3yT52BXRZ5tsbAQ7wJnWKGsBm1cB1vUp5",
+        "initial_rolls": 100,
+        "initial_ledger_balance": 250000000,
+        "initial_sce_ledger_balance": 100000000,
         "bootstrap_server": true
     }
 ]

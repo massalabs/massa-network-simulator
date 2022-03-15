@@ -5,11 +5,14 @@ import toml
 ROOT_PATH = "massa"
 CONFIG_PATH = f'{ROOT_PATH}/massa-node/base_config/config.toml'
 PEERS_PATH = f'{ROOT_PATH}/massa-node/base_config/initial_peers.json'
+NODE_INITIAL_LEDGER_PATH = f'{ROOT_PATH}/massa-node/base_config/initial_ledger.json'
+NODE_INITIAL_ROLLS_PATH = f'{ROOT_PATH}/massa-node/base_config/initial_rolls.json'
+NODE_INITIAL_SCE_LEDGER_PATH = f'{ROOT_PATH}/massa-node/base_config/initial_sce_ledger.json'
 NODES_PATH = f'/nodes.json'
 
 if __name__ == "__main__":
     print("setting up node...")
-    servers = json.load(open(NODES_PATH))
+    nodes = json.load(open(NODES_PATH))
     # setup peers
     res_peers = [{
         "advertised": True,
@@ -18,7 +21,7 @@ if __name__ == "__main__":
         "ip": p["ip"],
         "last_alive": None,
         "last_failure": None
-    } for p in servers]
+    } for p in nodes]
     with open(PEERS_PATH, "w") as json_file:
         json_file.write(json.dumps(res_peers, indent=2))
 
@@ -26,10 +29,37 @@ if __name__ == "__main__":
     config_data = toml.load(CONFIG_PATH)
     config_data["bootstrap"]["bootstrap_list"] = [
         [srv_v["ip"] + ":31245", srv_v["node_pubkey"]]
-        for srv_v in servers if srv_v["bootstrap_server"] is True
+        for srv_v in nodes if srv_v["bootstrap_server"] is True
     ]
     config_data["bootstrap"]["per_ip_min_interval"] = 1000
 
     # dump config
     with open(CONFIG_PATH, "w") as toml_file:
         toml.dump(config_data, toml_file)
+    
+    #init rolls
+    initial_rolls = {}
+    for node in nodes:
+        if node["initial_rolls"] > 0:
+            initial_rolls[node["address"]] = node["initial_rolls"]
+
+    with open(NODE_INITIAL_ROLLS_PATH, "w") as rolls_json_file:
+        rolls_json_file.write(json.dumps(initial_rolls, indent=4))
+    
+    #init sce ledger
+    initial_sce_ledger = {}
+    for node in nodes:
+        if node["initial_sce_ledger_balance"] > 0:
+            initial_sce_ledger[node["address"]] = node["initial_sce_ledger_balance"]
+
+    with open(NODE_INITIAL_SCE_LEDGER_PATH, "w") as initial_sce_ledger_json_file:
+        initial_sce_ledger_json_file.write(json.dumps(initial_sce_ledger, indent=4))
+
+    #init sce ledger
+    initial_ledger = {}
+    for node in nodes:
+        if node["initial_ledger_balance"] > 0:
+            initial_ledger[node["address"]] = { "balance": node["initial_ledger_balance"] }
+
+    with open(NODE_INITIAL_LEDGER_PATH, "w") as initial_ledger_json_file:
+        initial_ledger_json_file.write(json.dumps(initial_ledger, indent=4))
