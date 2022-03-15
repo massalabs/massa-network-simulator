@@ -18,6 +18,8 @@ def main():
     with open("config/nodes.json") as jsonFile:
         nodes_data = json.load(jsonFile)
     nodes_data_str = json.dumps(nodes_data).encode("utf-8")
+    genesis_timestamp = round(time.time() * 1000) + 60000 * 1
+    print(genesis_timestamp)
     for node_data in nodes_data:
         container = container_wrapper.create_container(
             files_dict={
@@ -29,7 +31,10 @@ def main():
             ul_kbitps=100,
             ul_ms=100,
             ip=node_data["ip"],
-            cmd=["/massa/run.sh"]
+            cmd=["/massa/run.sh"],
+            environment={
+                "GENESIS_TIMESTAMP": str(genesis_timestamp),
+            }
         )
         container.start()
     time.sleep(1000)

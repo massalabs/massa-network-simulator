@@ -18,6 +18,7 @@ if __name__ == "__main__":
         "advertised": True,
         "banned": False,
         "bootstrap": True,
+        "peer_type": "Bootstrap", # Make it customizable
         "ip": p["ip"],
         "last_alive": None,
         "last_failure": None
@@ -50,7 +51,7 @@ if __name__ == "__main__":
     initial_sce_ledger = {}
     for node in nodes:
         if node["initial_sce_ledger_balance"] > 0:
-            initial_sce_ledger[node["address"]] = node["initial_sce_ledger_balance"]
+            initial_sce_ledger[node["address"]] = str(node["initial_sce_ledger_balance"])
 
     with open(NODE_INITIAL_SCE_LEDGER_PATH, "w") as initial_sce_ledger_json_file:
         initial_sce_ledger_json_file.write(json.dumps(initial_sce_ledger, indent=4))
@@ -59,7 +60,7 @@ if __name__ == "__main__":
     initial_ledger = {}
     for node in nodes:
         if node["initial_ledger_balance"] > 0:
-            initial_ledger[node["address"]] = { "balance": node["initial_ledger_balance"] }
+            initial_ledger[node["address"]] = { "balance": str(node["initial_ledger_balance"]) }
 
     with open(NODE_INITIAL_LEDGER_PATH, "w") as initial_ledger_json_file:
         initial_ledger_json_file.write(json.dumps(initial_ledger, indent=4))
