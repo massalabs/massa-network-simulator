@@ -39,7 +39,7 @@ def main():
             }
         )
         container.start()
-    time.sleep(1000)
+    input()
     print("Cleanup...")
     container_wrapper.delete_containers()
     network.delete()

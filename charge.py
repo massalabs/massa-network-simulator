@@ -29,7 +29,6 @@ def send_tx_list(tx_list):
         "id": 0,
         "params": [tx_list]
     })
-    print(payload)
     return requests.post('http://localhost:33036/', data=payload, headers=headers)
 
 
