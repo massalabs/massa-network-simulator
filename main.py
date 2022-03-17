@@ -18,7 +18,7 @@ def main():
     with open("config/nodes.json") as jsonFile:
         nodes_data = json.load(jsonFile)
     nodes_data_str = json.dumps(nodes_data).encode("utf-8")
-    genesis_timestamp = round(time.time() * 1000) + 60000 * 1
+    genesis_timestamp = round(time.time() * 1000) + 30000
     for node_data in nodes_data:
         container = container_wrapper.create_container(
             files_dict={
