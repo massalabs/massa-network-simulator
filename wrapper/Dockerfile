@@ -16,7 +16,6 @@ RUN pip3 install toml
 
 RUN python3 /setup.py
 
-# Rebuild after config but should be fats as we already built before
 RUN cd massa/massa-node && cargo build --release --features sandbox
 
 COPY ./entrypoint.sh /entrypoint.sh
