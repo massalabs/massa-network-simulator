@@ -33,6 +33,10 @@ if __name__ == "__main__":
         for srv_v in nodes if srv_v["bootstrap_server"] is True
     ]
     config_data["bootstrap"]["per_ip_min_interval"] = 1000
+    nb_bootstrap_nodes = len([node for node in nodes if node["bootstrap_server"] is True])
+    config_data["network"]["peer_types_config"]["Bootstrap"]["target_out_connections"] = nb_bootstrap_nodes - 1
+    config_data["network"]["peer_types_config"]["Bootstrap"]["max_out_attempts"] = nb_bootstrap_nodes - 1
+    config_data["network"]["peer_types_config"]["Bootstrap"]["max_in_connections"] = nb_bootstrap_nodes - 1
 
     # dump config
     with open(CONFIG_PATH, "w") as toml_file:
