@@ -1,17 +1,38 @@
-FROM rustlang/rust:nightly-alpine
+FROM rustlang/rust:nightly
 
-RUN apk add --no-cache iproute2
+RUN apt-get install  iproute2
+RUN apt-get install git
+
+ARG GIT_URL=https://github.com/massalabs/massa.git
+
+# clone the repo
+RUN git clone -b add_env_variable_t0_sanbox "$GIT_URL" massa
+
+COPY ./setup.py /setup.py
+
+RUN apt update
+RUN apt-get install -y python3-pip
+RUN pip3 install toml
+
+RUN python3 /setup.py
+
+# Rebuild after config but should be fats as we already built before
+RUN cd massa/massa-node && cargo build --release --features sandbox
 
 COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-COPY ./massa_network /massa-network/massa_network
-RUN chmod +x /massa-network/massa_network
+RUN chmod +x /massa/target/release/massa-node
 
-RUN mkdir /massa-network/config
+COPY ./run.sh /massa/run.sh
+RUN chmod +x /massa/run.sh
 
-COPY ./run.sh /massa-network/run.sh
-RUN chmod +x /massa-network/run.sh
+COPY ./config.py /config.py
+
+RUN echo "[]" > /massa/massa-node/base_config/initial_peers.json
+RUN echo "" > /massa/massa-node/base_config/initial_ledger.json
+RUN echo "" > /massa/massa-node/base_config/initial_sce_ledger.json
+RUN echo "" > /massa/massa-node/base_config/initial_rolls.json
 
 ENTRYPOINT ["/entrypoint.sh"]
 
