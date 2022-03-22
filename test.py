@@ -9,7 +9,7 @@ def get_current_period():
         "id": 0,
         "params": []
     })
-    response = requests.post("http://localhost:33036/", data=payload, headers=headers)
+    response = requests.post("http://localhost:33035/", data=payload, headers=headers)
     return response.json()['result']['last_slot']['period']
 #print(get_current_period())
 
@@ -21,7 +21,7 @@ def send_tx_list(tx_list):
         "id": 0,
         "params": [tx_list]
     })
-    return requests.post('http://localhost:33035/', data=payload, headers=headers)
+    return requests.post('http://localhost:33037/', data=payload, headers=headers)
 
 def get_balances(addresses):
     headers = {'Content-type': 'application/json'}
@@ -31,10 +31,10 @@ def get_balances(addresses):
         "id": 0,
         "params": [addresses]
     })
-    response = requests.post("http://localhost:33036/", data=payload, headers=headers)
+    response = requests.post("http://localhost:33037/", data=payload, headers=headers)
     return response.json()
 
-#print(get_balances(["1RnyG7tQNbvErdmTeLc4TEth3rPfPTHZy5kuu6u2XsyFS9ta5"]))
+print(get_balances(["ZAJjT4dvsqZ65e52c3Dprg5g4eREhjXQSEtPaUgtrfD3ZWugf"]))
 
 def get_block(block_id):
     headers = {'Content-type': 'application/json'}
@@ -44,7 +44,7 @@ def get_block(block_id):
         "id": 0,
         "params": [block_id]
     })
-    response = requests.post("http://localhost:33036/", data=payload, headers=headers)
+    response = requests.post("http://localhost:33035/", data=payload, headers=headers)
     return response.json()
 
-print(get_block("2ffrRJjeQC7t3Jia1tevdkdWCVVvGpxtZ4XZKNSqM4N2QoqZ4c"))
+#print(get_block("2oG4Cz3u23rC6uFf2nKvx2d8UgvSWjytZBqP9xa56wVnMvLKsz"))

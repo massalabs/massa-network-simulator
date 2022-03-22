@@ -102,9 +102,10 @@ class ContainerWrapper:
 
     def get_logs(self, from_line=0):
         logs = self.container.logs().decode('utf-8').split("\n")[from_line:]
+        logs_filtered = []
         for log_line in logs:
-            log_line = re.sub(r'\x1b\[\d+m', '', log_line)
-        return logs
+            logs_filtered.append(re.sub(r'\x1b\[\d+m', '', log_line))
+        return logs_filtered
 
     def delete(self):
         if self.container is not None:

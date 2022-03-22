@@ -4,6 +4,13 @@ from scenarios.ip_discovery import ip_discovery_scenario
 from scenarios.banned_peer_try_connection import banned_peer_try_connection
 import json
 import time
+import threading
+
+def logs(containers):
+    for container in containers:
+        with open("logs/logs_" + container + ".txt", 'a+') as f:
+            f.write('\n'.join(containers[container].get_logs())) 
+        time.sleep(2)
 
 def main():
     print("Initializing...")
@@ -19,6 +26,7 @@ def main():
         nodes_data = json.load(jsonFile)
     nodes_data_str = json.dumps(nodes_data).encode("utf-8")
     genesis_timestamp = round(time.time() * 1000) + 30000
+    containers = dict()
     for node_data in nodes_data:
         container = container_wrapper.create_container(
             files_dict={
@@ -39,6 +47,9 @@ def main():
             }
         )
         container.start()
+        containers[node_data["ip"]] = container
+    processThread = threading.Thread(target=logs, args=(containers,))
+    processThread.start()
     input()
     print("Cleanup...")
     container_wrapper.delete_containers()
