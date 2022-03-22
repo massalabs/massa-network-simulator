@@ -7,9 +7,10 @@ import time
 import threading
 
 def logs(containers):
-    for container in containers:
-        with open("logs/logs_" + container + ".txt", 'a+') as f:
-            f.write('\n'.join(containers[container].get_logs())) 
+    while True:
+        for container in containers:
+            with open("logs/logs_" + container + ".txt", 'w+') as f:
+                f.write('\n'.join(containers[container].get_logs())) 
         time.sleep(2)
 
 def main():
