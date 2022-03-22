@@ -34,6 +34,7 @@ def main():
                 "/massa/massa-node/config/node_privkey.key": (node_data["node_privkey"]).encode("utf-8"),
                 "/massa/massa-node/config/staking_keys.json": ('["' + node_data["staking_privkey"] + '"]').encode("utf-8")
             },
+            name="massa_node_"+node_data["ip"],
             network=network,
             ul_kbitps=100,
             ul_ms=100,

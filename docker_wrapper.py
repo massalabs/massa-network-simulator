@@ -15,9 +15,9 @@ class DockerWrapper:
     def create_network(self, subnet: str, gateway_ip: str):
         return NetworkWrapper(self, subnet, gateway_ip)
 
-    def create_container(self, network, files_dict: dict, ul_kbitps: int, ul_ms: int, ip: str, cmd: list, environment: dict, ports: dict):
+    def create_container(self, network, files_dict: dict, ul_kbitps: int, ul_ms: int, ip: str, cmd: list, environment: dict, ports: dict, name: str):
         new_container = ContainerWrapper(
-            self, network, files_dict, ul_kbitps, ul_ms, ip, cmd, environment, ports)
+            self, network, files_dict, ul_kbitps, ul_ms, ip, cmd, environment, ports, name)
         self.containers.append(new_container)
         return new_container
 
@@ -58,9 +58,7 @@ class NetworkWrapper:
 
 class ContainerWrapper:
     def __init__(self, wrapper: DockerWrapper, network: NetworkWrapper,
-                 files_dict: dict, ul_kbitps: int, ul_ms: int, ip: str, cmd: list, environment: dict, ports: dict):
-        print(environment)
-        print(ports)
+                 files_dict: dict, ul_kbitps: int, ul_ms: int, ip: str, cmd: list, environment: dict, ports: dict, name: str):
         result = wrapper.docker_client.api.create_container(
             "massa-simulator",
             command=[str(ul_kbitps), str(ul_ms)] + cmd,
@@ -74,6 +72,7 @@ class ContainerWrapper:
                     ipv4_address=str(ip),
                 )
             }),
+            name=name,
             environment=environment,
             ports=[33035]
         )
