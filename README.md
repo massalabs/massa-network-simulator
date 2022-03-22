@@ -35,6 +35,8 @@ The nodes need some values to be configured: if they stake, the initial ledger e
 
 To get your private key/public key and address use the massa client a run `wallet_generate_private_key` and then `wallet_info` and you will get valid credentials.
 
+Logs are available in folder logs when running a network.
+
 Next steps :
 
 - Improve docs
