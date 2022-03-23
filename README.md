@@ -2,9 +2,26 @@
 
 Use Docker to simulate a P2P network. You can simulate the Massa network on your local network and customize multiple variables :
 
-### 1. [Configuration](#configuration)
-#### 1.1 [Environnement variable configuration](#environnement-variables)
-#### 1.2 [Nodes configuration](#nodes-configuration)
+### 1. [Installation](#installation)
+### 2. [Configuration](#configuration)
+#### 2.1 [Environnement variable configuration](#environnement-variables)
+#### 2.2 [Nodes configuration](#nodes-configuration)
+### 3. [Charge network](#charge-network)
+### 4. [Monitoring network](#monitoring-network)
+----
+
+## Installation
+
+Need docker, git and python3.
+Build docker image :
+```
+cd wrapper && docker build -t massa-simulator .
+```
+Launch the simulator :
+```
+python3 main.py
+```
+
 ----
 ## Configuration
 ### Environnement variables
@@ -35,9 +52,18 @@ The nodes need some values to be configured: if they stake, the initial ledger e
 
 To get your private key/public key and address use the massa client a run `wallet_generate_private_key` and then `wallet_info` and you will get valid credentials.
 
-Logs are available in folder logs when running a network.
+----
+## Charge network
 
-Next steps :
+To add charge to the network you can use the script `charge.py` that will create 32 accounts and provide them money to make a load of operations.
+
+---
+## Monitoring network
+
+Logs are available in folder `logs/` when running a network. The is one file by node identified by their IP address in the sub network.
+
+
+### Next steps :
 
 - Improve docs
 - More customizable variable

@@ -7,9 +7,10 @@ import time
 import threading
 
 def logs(containers):
-    for container in containers:
-        with open("logs/logs_" + container + ".txt", 'a+') as f:
-            f.write('\n'.join(containers[container].get_logs())) 
+    while True:
+        for container in containers:
+            with open("logs/logs_" + container + ".txt", 'w+') as f:
+                f.write('\n'.join(containers[container].get_logs())) 
         time.sleep(2)
 
 def main():
@@ -36,7 +37,7 @@ def main():
             },
             name="massa_node_"+node_data["ip"],
             network=network,
-            ul_kbitps=100,
+            ul_kbitps=10000,
             ul_ms=100,
             ip=node_data["ip"],
             cmd=["/massa/run.sh"],
