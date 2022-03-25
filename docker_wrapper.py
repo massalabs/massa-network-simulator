@@ -59,29 +59,22 @@ class NetworkWrapper:
 class ContainerWrapper:
     def __init__(self, wrapper: DockerWrapper, network: NetworkWrapper,
                  files_dict: dict, ul_kbitps: int, ul_ms: int, ip: str, cmd: list, environment: dict, ports: dict, name: str):
-        result = wrapper.docker_client.api.create_container(
+        result = wrapper.docker_client.containers.create(
             "massa-simulator",
             command=[str(ul_kbitps), str(ul_ms)] + cmd,
             detach=True,
-            host_config=wrapper.docker_client.api.create_host_config(
-                cap_add=["NET_ADMIN"],
-                port_bindings=ports,
-            ),
-            networking_config=wrapper.docker_client.api.create_networking_config({
-                network.id: wrapper.docker_client.api.create_endpoint_config(
-                    ipv4_address=str(ip),
-                )
-            }),
+            cap_add=["NET_ADMIN"],
+            ports=ports,
+            network=network.id,
             name=name,
             environment=environment,
-            ports=[33035]
+            security_opt=["seccomp:security.json"],
+            privileged=True
         )
+        wrapper.docker_client.networks.get(network.id).connect(result, ipv4_address=ip)
         print("created")
-        warns = result.get("Warnings")
-        if warns:
-            warnings.warn(warns)
-        self.id = result["Id"]
-        self.container = wrapper.docker_client.containers.get(self.id)
+        self.id = result.id
+        self.container = result
 
         for file_path, file_bytes in files_dict.items():
             (file_dir, file_name) = os.path.split(file_path)
