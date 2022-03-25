@@ -33,5 +33,10 @@ RUN echo "" > /massa/massa-node/base_config/initial_ledger.json
 RUN echo "" > /massa/massa-node/base_config/initial_sce_ledger.json
 RUN echo "" > /massa/massa-node/base_config/initial_rolls.json
 
+RUN apt install perf-linux
+RUN wget https://github.com/jonhoo/inferno/archive/refs/heads/master.zip
+RUN unzip master.zip
+RUN cd inferno-master/ && cargo build
+
 ENTRYPOINT ["/entrypoint.sh"]
 
