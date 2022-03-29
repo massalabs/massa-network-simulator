@@ -43,6 +43,7 @@ RUN echo "[]" > /massa/massa-node/base_config/initial_peers.json
 RUN echo "" > /massa/massa-node/base_config/initial_ledger.json
 RUN echo "" > /massa/massa-node/base_config/initial_sce_ledger.json
 RUN echo "" > /massa/massa-node/base_config/initial_rolls.json
+RUN apt install -y net-tools
 
 ENTRYPOINT ["/entrypoint.sh"]
 

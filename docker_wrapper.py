@@ -65,13 +65,14 @@ class ContainerWrapper:
             detach=True,
             cap_add=["NET_ADMIN"],
             ports=ports,
-            network=network.id,
             name=name,
             environment=environment,
             security_opt=["seccomp:security.json"],
             privileged=True
         )
-        wrapper.docker_client.networks.get(network.id).connect(result, ipv4_address=ip)
+        print(ip)
+        print(result.name)
+        wrapper.docker_client.networks.get(network.id).connect(result.name, ip)
         print("created")
         self.id = result.id
         self.container = result

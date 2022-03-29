@@ -18,11 +18,11 @@ if __name__ == "__main__":
         "advertised": True,
         "banned": False,
         "bootstrap": True,
-        "peer_type": "Bootstrap" if p["bootstrap_server"] == True else "Standard",
+        "peer_type": "Bootstrap",
         "ip": p["ip"],
         "last_alive": None,
         "last_failure": None
-    } for p in nodes]
+    } for p in nodes if p["bootstrap_server"] is True]
     with open(PEERS_PATH, "w") as json_file:
         json_file.write(json.dumps(res_peers, indent=2))
 
