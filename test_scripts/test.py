@@ -31,10 +31,10 @@ def get_balances(addresses):
         "id": 0,
         "params": [addresses]
     })
-    response = requests.post("http://localhost:33037/", data=payload, headers=headers)
+    response = requests.post("http://localhost:33032/", data=payload, headers=headers)
     return response.json()
 
-print(get_balances(["ZAJjT4dvsqZ65e52c3Dprg5g4eREhjXQSEtPaUgtrfD3ZWugf"]))
+print(get_balances(["JBbufTa6AywQDeCWvm6oSeik5DhwRLN87uFYuCXx4i1o5isL3"]))
 
 def get_block(block_id):
     headers = {'Content-type': 'application/json'}
@@ -44,7 +44,7 @@ def get_block(block_id):
         "id": 0,
         "params": [block_id]
     })
-    response = requests.post("http://localhost:33035/", data=payload, headers=headers)
+    response = requests.post("http://localhost:33032/", data=payload, headers=headers)
     return response.json()
 
-#print(get_block("2oG4Cz3u23rC6uFf2nKvx2d8UgvSWjytZBqP9xa56wVnMvLKsz"))
+print(get_block("2GHwce7Bq3sMEYuQNTtbBdMSsCuEXnHDoyQ19w4JmUu34PsBWn"))

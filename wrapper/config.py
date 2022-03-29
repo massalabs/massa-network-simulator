@@ -37,6 +37,7 @@ if __name__ == "__main__":
     config_data["network"]["peer_types_config"]["Bootstrap"]["target_out_connections"] = nb_bootstrap_nodes - 1
     config_data["network"]["peer_types_config"]["Bootstrap"]["max_out_attempts"] = nb_bootstrap_nodes - 1
     config_data["network"]["peer_types_config"]["Bootstrap"]["max_in_connections"] = nb_bootstrap_nodes - 1
+    config_data["logging"]["level"] = 3
 
     # dump config
     with open(CONFIG_PATH, "w") as toml_file:
