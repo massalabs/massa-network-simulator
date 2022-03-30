@@ -76,6 +76,7 @@ class ContainerWrapper:
         print("created")
         self.id = result.id
         self.container = result
+        self.log_line = 0
 
         for file_path, file_bytes in files_dict.items():
             (file_dir, file_name) = os.path.split(file_path)
@@ -93,8 +94,9 @@ class ContainerWrapper:
     def start(self):
         self.container.start()
 
-    def get_logs(self, from_line=0):
-        logs = self.container.logs().decode('utf-8').split("\n")[from_line:]
+    def get_logs(self):
+        logs = self.container.logs().decode('utf-8').split("\n")[self.log_line:]
+        self.log_line += (len(logs) - 1)
         logs_filtered = []
         for log_line in logs:
             logs_filtered.append(re.sub(r'\x1b\[\d+m', '', log_line))

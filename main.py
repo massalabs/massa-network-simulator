@@ -8,10 +8,11 @@ import threading
 
 containers = dict()
 
-def logs(containers):
+def logs():
+    global containers
     while True:
         for container in containers:
-            with open("logs/logs_" + container + ".txt", 'w+') as f:
+            with open("logs/logs_" + container + ".txt", 'a+') as f:
                 f.write('\n'.join(containers[container].get_logs())) 
         time.sleep(2)
 
@@ -82,7 +83,7 @@ def main():
         else:
             processThread = threading.Thread(target=launch_node, args=(container_wrapper, network, genesis_timestamp, nodes_data_str, node_data,))
             processThread.start()
-    processThread = threading.Thread(target=logs, args=(containers,))
+    processThread = threading.Thread(target=logs)
     processThread.start()
     input()
     print("Cleanup...")
