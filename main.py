@@ -1,86 +1,96 @@
 from docker_wrapper import DockerWrapper as ContainerWrapper
 import gc
-from scenarii.ip_discovery import ip_discovery_scenario
-from scenarii.banned_peer_try_connection import banned_peer_try_connection
-from scenarii.blocks_transmission import block_transmission
+from scenarios.ip_discovery import ip_discovery_scenario
+from scenarios.banned_peer_try_connection import banned_peer_try_connection
+from scenarios.blocks_transmission import block_transmission
+import json
+import time
+import threading
 
+containers = dict()
+
+def logs():
+    global containers
+    while True:
+        for container in containers:
+            with open("logs/logs_" + container + ".txt", 'a+') as f:
+                f.write('\n'.join(containers[container].get_logs())) 
+        time.sleep(2)
+
+def launch_node(container_wrapper, network, genesis_timestamp, nodes_data_str, node_data):
+    global containers
+    if node_data["launch_time_after_genesis"] and node_data["launch_time_after_genesis"] > 0:
+        time.sleep(node_data["launch_time_after_genesis"])
+    container = container_wrapper.create_container(
+            files_dict={
+                "/nodes.json": nodes_data_str,
+                "/massa/massa-node/config/node_privkey.key": (node_data["node_privkey"]).encode("utf-8"),
+                "/massa/massa-node/config/staking_keys.json": ('["' + node_data["staking_privkey"] + '"]').encode("utf-8")
+            },
+            name="massa_node_"+node_data["ip"],
+            network=network,
+            ul_kbitps=1600,
+            ul_ms=0,
+            ip=node_data["ip"],
+            cmd=["/massa/run.sh"],
+            environment={
+                "GENESIS_TIMESTAMP": str(genesis_timestamp),
+            },
+            ports={
+                33035: node_data["port"]
+            }
+        )
+    container.start()
+    containers[node_data["ip"]] = container
 
 def main():
+    global containers
     print("Initializing...")
     container_wrapper = ContainerWrapper()
-    image = container_wrapper.create_image("./wrapper/")
     network = container_wrapper.create_network(
         subnet="169.202.0.0/16",
         gateway_ip="169.202.0.254"
     )
 
-    config_template = {
-        "logging": {
-            "level": 6,
-        },
-        "network": {
-            "bind": "0.0.0.0:50000",
-            "routable_ip": None,
-            "protocol_port": 50000,
-            "connect_timeout": {"secs": 5, "nanos": 0},
-            "wakeup_interval": {"secs": 10, "nanos": 0},
-            "peers_file": "config/peers.json",
-            "target_out_connections": 20,
-            "max_in_connections": 100,
-            "max_in_connections_per_ip": 5,
-            "max_out_connnection_attempts": 10,
-            "max_idle_peers": 1000,
-            "max_banned_peers": 1000,
-            "max_advertise_length": 100000,
-            "peers_file_dump_interval": {"secs": 30, "nanos": 0}
-        },
-        "protocol": {
-            "message_timeout": {"secs": 5, "nanos": 0},
-            "ask_peer_list_interval": {"secs": 2, "nanos": 0}
-        },
-        "consensus":{
-            "genesis_timestamp_millis" : 1607958448000,
-            "t0_millis" : 16000,
-            "thread_count" : 2,
-            "selection_rng_seed" :  42,
-            "genesis_key" : 'SGoTK5TJ9ZcCgQVmdfma88UdhS6GK94aFEYAsU3F1inFayQ6S',
-            "nodes" : [
-                ['4vYrPNzUM8PKg2rYPW3ZnXPzy67j9fn5WsGCbnwAnk2Lf7jNHb','LGXe9RrR1QNSsSn8bAEgrsYM8WwX67oHLjGj6e19bCW9ZKo6p'],
-                ['6ZoZ46HVJMKVTU92a1QRQqWpERL5tTAJ4RjazPBRzFXLmMDu8g','PZZzhDKrdGiuQMGEazTGP5b164qofYXh9Yp4SQ4uZChxAQqtK'],
-                ['54VEbD2R2HkUz2G5NGHyxhaFDhrQFG62UqFLWsUywnHtDsM8qh','2eLQSjhrep9Grw7yDifXnDKgCc1WTXBCtdeREzuJd9jiSZuZmr']
-            ],
-            "current_node_index" : 0
-        }
-    }
-
-    print("Running tests...")
-    test_functions = {
-        "block_propagation": block_transmission,
-        "ip_discovery_scenario": ip_discovery_scenario,
-        "banned_peer_try_connection": banned_peer_try_connection,
-    }
-    results = dict()
+    print("Running network...")
     n_run, n_success = 0, 0
-    for test_name, test_function in test_functions.items():
-        n_run += 1
-        try:
-            test_function(image, network, config_template, container_wrapper)
-            results[test_name] = {"ok": True}
-            n_success += 1
-            print("Test", test_name, "PASSED ヾ(＾-＾)ノ")
-        except Exception as e:
-            results[test_name] = {"ok": False, "exception": e}
-            print("Test", test_name, "FAILED (╯︵╰,) =>", e)
-        finally:
-            container_wrapper.delete_containers()
-            gc.collect()
-
+    with open("config/nodes.json") as jsonFile:
+        nodes_data = json.load(jsonFile)
+    nodes_data_str = json.dumps(nodes_data).encode("utf-8")
+    genesis_timestamp = round(time.time() * 1000) + 10000
+    for node_data in nodes_data:
+        if node_data["bootstrap_server"] == True:
+            container = container_wrapper.create_container(
+                files_dict={
+                    "/nodes.json": nodes_data_str,
+                    "/massa/massa-node/config/node_privkey.key": (node_data["node_privkey"]).encode("utf-8"),
+                    "/massa/massa-node/config/staking_keys.json": ('["' + node_data["staking_privkey"] + '"]').encode("utf-8")
+                },
+                name="massa_node_"+node_data["ip"],
+                network=network,
+                ul_kbitps=1600,
+                ul_ms=0,
+                ip=node_data["ip"],
+                cmd=["/massa/run.sh"],
+                environment={
+                    "GENESIS_TIMESTAMP": str(genesis_timestamp),
+                },
+                ports={
+                    33035: node_data["port"]
+                }
+            )
+            container.start()
+            containers[node_data["ip"]] = container
+        else:
+            processThread = threading.Thread(target=launch_node, args=(container_wrapper, network, genesis_timestamp, nodes_data_str, node_data,))
+            processThread.start()
+    processThread = threading.Thread(target=logs)
+    processThread.start()
+    input()
     print("Cleanup...")
     container_wrapper.delete_containers()
     network.delete()
-    image.delete()
     del network
-    del image
     del container_wrapper
     gc.collect()
 

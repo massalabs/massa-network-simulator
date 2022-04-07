@@ -1,4 +1,3 @@
 #!/bin/sh
 
-cd /massa-network && ./massa_network
-
+python3 config.py && cd /massa/massa-node && RUST_BACKTRACE=full ../target/release/massa-node && sleep 30

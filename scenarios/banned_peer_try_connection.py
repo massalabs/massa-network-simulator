@@ -2,7 +2,7 @@ from copy import deepcopy
 import toml
 import json
 import time
-from scenarii.trace_parser import MassaTraceParser
+from scenarios.trace_parser import MassaTraceParser
 
 
 def banned_peer_try_connection(image, network, config_template, container_wrapper):
@@ -38,27 +38,27 @@ def banned_peer_try_connection(image, network, config_template, container_wrappe
     container1 = container_wrapper.create_container(
         image=image,
         files_dict={
-            "/massa-network/config/config.toml": toml.dumps(config1).encode("utf-8"),
-            "/massa-network/config/peers.json": json.dumps(peers1).encode("utf-8")
+            "/massa/massa-node/config/config.toml": toml.dumps(config1).encode("utf-8"),
+            "/massa/massa-node/config/peers.json": json.dumps(peers1).encode("utf-8")
         },
         network=network,
         ul_kbitps=100,
         ul_ms=100,
         ip=ip1,
-        cmd=["/massa-network/run.sh"]
+        cmd=["/massa/run.sh"]
     )
 
     container2 = container_wrapper.create_container(
         image=image,
         files_dict={
-            "/massa-network/config/config.toml": toml.dumps(config2).encode("utf-8"),
-            "/massa-network/config/peers.json": json.dumps(peers2).encode("utf-8")
+            "/massa/massa-node/config/config.toml": toml.dumps(config2).encode("utf-8"),
+            "/massa/massa-node/config/peers.json": json.dumps(peers2).encode("utf-8")
         },
         network=network,
         ul_kbitps=100,
         ul_ms=100,
         ip=ip2,
-        cmd=["/massa-network/run.sh"]
+        cmd=["/massa/run.sh"]
     )
 
     container1.start()

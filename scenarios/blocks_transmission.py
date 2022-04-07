@@ -2,7 +2,7 @@ from copy import deepcopy
 import toml
 import json
 import time
-from scenarii.trace_parser import MassaTraceParser
+from scenarios.trace_parser import MassaTraceParser
 import pandas as pd
 
 
@@ -98,7 +98,6 @@ def block_transmission(image, network, config_template, container_wrapper):
         MassaTraceParser(container3.get_logs)
     ]
     time.sleep(60)
-
     # print("\n".join(container1.get_logs()))
     # print("================================\n\n")
     # print("\n".join(container2.get_logs()))

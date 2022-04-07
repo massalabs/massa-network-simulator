@@ -4,6 +4,7 @@ import os
 from io import BytesIO
 import tarfile
 import warnings
+import re
 
 
 class DockerWrapper:
@@ -14,12 +15,9 @@ class DockerWrapper:
     def create_network(self, subnet: str, gateway_ip: str):
         return NetworkWrapper(self, subnet, gateway_ip)
 
-    def create_image(self, wrapper_path: str):
-        return ImageWrapper(self, wrapper_path)
-
-    def create_container(self, image, network, files_dict: dict, ul_kbitps: int, ul_ms: int, ip: str, cmd: list):
+    def create_container(self, network, files_dict: dict, ul_kbitps: int, ul_ms: int, ip: str, cmd: list, environment: dict, ports: dict, name: str):
         new_container = ContainerWrapper(
-            self, image, network, files_dict, ul_kbitps, ul_ms, ip, cmd)
+            self, network, files_dict, ul_kbitps, ul_ms, ip, cmd, environment, ports, name)
         self.containers.append(new_container)
         return new_container
 
@@ -58,48 +56,27 @@ class NetworkWrapper:
             warnings.warn("failed removing network {}: {}".format(self.id, e))
 
 
-class ImageWrapper:
-    def __init__(self, wrapper: DockerWrapper, wrapper_path: str):
-        self.wrapper = wrapper
-        image, _ = self.wrapper.docker_client.images.build(
-            path=wrapper_path, rm=True)
-        self.image = image
-        self.id = self.image.id
-
-    def delete(self):
-        if self.image is not None:
-            self.wrapper.docker_client.images.remove(self.id)
-            self.image = None
-
-    def __del__(self):
-        try:
-            self.delete()
-        except Exception as e:
-            warnings.warn("failed removing image {}: {}".format(self.id, e))
-
-
 class ContainerWrapper:
-    def __init__(self, wrapper: DockerWrapper, image: ImageWrapper, network: NetworkWrapper,
-                 files_dict: dict, ul_kbitps: int, ul_ms: int, ip: str, cmd: list):
-
-        result = wrapper.docker_client.api.create_container(
-            image.id,
+    def __init__(self, wrapper: DockerWrapper, network: NetworkWrapper,
+                 files_dict: dict, ul_kbitps: int, ul_ms: int, ip: str, cmd: list, environment: dict, ports: dict, name: str):
+        result = wrapper.docker_client.containers.create(
+            "massa-simulator",
             command=[str(ul_kbitps), str(ul_ms)] + cmd,
             detach=True,
-            host_config=wrapper.docker_client.api.create_host_config(
-                cap_add=["NET_ADMIN"]
-            ),
-            networking_config=wrapper.docker_client.api.create_networking_config({
-                network.id: wrapper.docker_client.api.create_endpoint_config(
-                    ipv4_address=str(ip),
-                )
-            })
+            cap_add=["NET_ADMIN"],
+            ports=ports,
+            name=name,
+            environment=environment,
+            security_opt=["seccomp:security.json"],
+            privileged=True
         )
-        warns = result.get("Warnings")
-        if warns:
-            warnings.warn(warns)
-        self.id = result["Id"]
-        self.container = wrapper.docker_client.containers.get(self.id)
+        print(ip)
+        print(result.name)
+        wrapper.docker_client.networks.get(network.id).connect(result.name, ip)
+        print("created")
+        self.id = result.id
+        self.container = result
+        self.log_line = 0
 
         for file_path, file_bytes in files_dict.items():
             (file_dir, file_name) = os.path.split(file_path)
@@ -117,8 +94,13 @@ class ContainerWrapper:
     def start(self):
         self.container.start()
 
-    def get_logs(self, from_line=0):
-        return self.container.logs().decode('utf-8').split("\n")[from_line:]
+    def get_logs(self):
+        logs = self.container.logs().decode('utf-8').split("\n")[self.log_line:]
+        self.log_line += (len(logs) - 1)
+        logs_filtered = []
+        for log_line in logs:
+            logs_filtered.append(re.sub(r'\x1b\[\d+m', '', log_line))
+        return logs_filtered
 
     def delete(self):
         if self.container is not None:
