@@ -1,10 +1,10 @@
 [ 
     {
         "ip": "169.202.0.2",
-        "node_privkey": "2ZyEmw2N9zeUSCxdYeMse2oi4gd9RAECgVbtCJ2GuEozwhQk5L",
-        "node_pubkey": "5tuXKh377eV5DNp8xzLo5dhJJVZoAmRuP9CGnKAhGp3xFrhuMv",
-        "staking_privkey": "2ZyEmw2N9zeUSCxdYeMse2oi4gd9RAECgVbtCJ2GuEozwhQk5L",
-        "address": "xh1fXpp7VuciaCwejMF7ufF19SWv7dFPJ7U6HiTQaeNEFBiV3",
+        "node_privkey": "2C2zbDk49aBPibtqarr99v5EZD1tgp6cAZGwVjdtKnoesMaxEa",
+        "node_pubkey": "2Lr3U2QaWjdTM9GrGpz1SENU1oHacB7JohAfg4e4QUm9ptBfG3",
+        "staking_privkey": "2C2zbDk49aBPibtqarr99v5EZD1tgp6cAZGwVjdtKnoesMaxEa",
+        "address": "A12dG5xP1RDEB5ocdHkymNVvvSJmUL9BgHwCksDowqmGWxfpm93x",
         "initial_rolls": 100,
         "initial_ledger_balance": 250000000,
         "initial_sce_ledger_balance": 100000000,
@@ -12,16 +12,42 @@
         "bootstrap_server": true
     },
     {
+        "ip": "169.202.0.3",
+        "node_privkey": "qDkR5eZLqgtzfCURHHVpaz19XLNVQFMABzfBA8ojwkZY1M5rc",
+        "node_pubkey": "2E4MgTexV7CuqGYUVuHkfaatfaKNp2K3NgfJUfm6L8RB8UF5Xy",
+        "staking_privkey": "qDkR5eZLqgtzfCURHHVpaz19XLNVQFMABzfBA8ojwkZY1M5rc",
+        "address": "A12htxRWiEm8jDJpJptr6cwEhWNcCSFWstN1MLSa96DDkVM9Y42G",
+        "initial_rolls": 100,
+        "initial_ledger_balance": 250000000,
+        "initial_sce_ledger_balance": 100000000,
+        "port": 33033,
+        "launch_time_after_genesis": 60,
+        "bootstrap_server": false
+    },
+    {
         "ip": "169.202.0.6",
-        "node_privkey": "2SPuw3cNU9jfbYyJq3V7YM6eANRbtV4jPw1SsytjDfS1CSP5Tp",
-        "node_pubkey": "5htMt1hq7QWfnNuKTtWYNiXzxnCtGLvVSCwTkYCzjXBMnMApa9",
-        "staking_privkey": "2SPuw3cNU9jfbYyJq3V7YM6eANRbtV4jPw1SsytjDfS1CSP5Tp",
-        "address": "JBbufTa6AywQDeCWvm6oSeik5DhwRLN87uFYuCXx4i1o5isL3",
+        "node_privkey": "2CBdVhFgLVEM9UB2DQb9R7TMFeGnawgu57TPoa63Nu9vpFoWTn",
+        "node_pubkey": "ZjrNbwf3swoSNG77CGC9vpEPWqhZzQuJ3gwajHzp4XHTzez36",
+        "staking_privkey": "2CBdVhFgLVEM9UB2DQb9R7TMFeGnawgu57TPoa63Nu9vpFoWTn",
+        "address": "A18RPx3HfGnumLz3wAr2Z1nnUoLEDXnqbLgLmB2EjcNs3TTmbhx",
         "initial_rolls": 100,
         "initial_ledger_balance": 250000000,
         "initial_sce_ledger_balance": 100000000,
         "port": 33036,
-        "launch_time_after_genesis": 60,
+        "launch_time_after_genesis": 62,
+        "bootstrap_server": false
+    },
+    {
+        "ip": "169.202.0.11",
+        "node_privkey": "ass7Xbp69FPJVofU2L7xCqSrVWNQs8uZu9TqZu8es8eMHDxuh",
+        "node_pubkey": "2QxBAjCqyeZ6ctrnYP2dwTXnqJMCTC3AdFk2QMefYa9fgcEjXC",
+        "staking_privkey": "ass7Xbp69FPJVofU2L7xCqSrVWNQs8uZu9TqZu8es8eMHDxuh",
+        "address": "A12vxtqNovAKocjEGiMBr3ZmUq141BWriSTvbPe5Npe2T2GJggyw",
+        "initial_rolls": 100,
+        "initial_ledger_balance": 250000000,
+        "initial_sce_ledger_balance": 100000000,
+        "port": 33041,
+        "launch_time_after_genesis": 61,
         "bootstrap_server": false
     }
 ]

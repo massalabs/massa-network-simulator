@@ -13,21 +13,21 @@ RUN wget https://github.com/jonhoo/inferno/archive/refs/heads/master.zip
 RUN unzip master.zip
 RUN cd inferno-master/ && cargo build
 
-RUN mkdir -p /massa/target/release
-RUN mkdir -p /massa/massa-node/
+#RUN mkdir -p /massa/target/release
+#RUN mkdir -p /massa/massa-node/
 
-COPY ./massa/target/release/massa-node /massa/target/release
-COPY ./massa/massa-node /massa/massa-node
+#COPY ./massa/target/release/massa-node /massa/target/release
+#COPY ./massa/massa-node /massa/massa-node
 COPY ./setup.py /setup.py
 
-#ARG GIT_URL=https://github.com/massalabs/massa.git
+ARG GIT_URL=https://github.com/massalabs/massa.git
 
 # clone the repo
-#RUN git clone -b feature/operations_batch/main "$GIT_URL" massa
+RUN git clone "$GIT_URL" massa
 
-#RUN python3 /setup.py
+RUN python3 /setup.py
 
-#RUN cd massa/massa-node && cargo build --release --features sandbox
+RUN cd massa/massa-node && cargo build --release --features sandbox
 
 COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
