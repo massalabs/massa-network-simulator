@@ -2,12 +2,14 @@
 
 FROM rustlang/rust:nightly
 
-RUN apt-get install  iproute2
-RUN apt-get install git
-RUN apt update
-RUN apt-get install -y libclang-dev
+RUN apt-get install -y iproute2
+RUN apt-get install -y git
+RUN apt-get update
+RUN apt-get install -y libclang-11-dev
+RUN apt-get install -y build-essential
 RUN apt-get install -y python3-pip
 RUN pip3 install toml
+
 
 RUN apt install -y linux-perf
 RUN wget https://github.com/jonhoo/inferno/archive/refs/heads/master.zip
