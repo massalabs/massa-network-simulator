@@ -5,6 +5,7 @@ FROM rustlang/rust:nightly
 RUN apt-get install  iproute2
 RUN apt-get install git
 RUN apt update
+RUN apt-get install -y libclang-dev
 RUN apt-get install -y python3-pip
 RUN pip3 install toml
 
