@@ -10,7 +10,7 @@ def get_bytes_compact(content):
     enc_type_id = varint.encode(0)
     recipient_address = base58.b58decode_check(content['op']['Transaction']["recipient_address"][1:])[1:]
     enc_amount = varint.encode(int(content['op']['Transaction']['amount']))
-    bytes_compact = enc_fee + enc_expire_period + enc_type_id + recipient_address + enc_amount
+    bytes_compact: bytes = enc_fee + enc_expire_period + enc_type_id + recipient_address + enc_amount
     return bytes_compact
 
 def create_transaction(sender_private_key, creator_public_key, fee, expire_period, recipient_address, amount):
@@ -26,7 +26,7 @@ def create_transaction(sender_private_key, creator_public_key, fee, expire_perio
     transaction = {}
     transaction["creator_public_key"] = creator_public_key
     transaction["signature"] = sign_transaction(transaction["creator_public_key"], content, sender_private_key).decode("utf-8")
-    transaction["serialized_content"] = get_bytes_compact(content)
+    transaction["serialized_content"] = get_bytes_compact(content).decode("utf-8")
     return transaction
 
 def sign_transaction(public_key, content, private_key):
