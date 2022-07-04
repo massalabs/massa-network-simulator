@@ -7,7 +7,7 @@ import sys
 from multiprocessing import Pool
 
 from transactions import create_transaction
-from crypto import deduce_address, get_address_thread
+from crypto import KeyPair, deduce_address, get_address_thread
 from secp256k1 import PrivateKey
 
 def get_current_period():
@@ -18,7 +18,7 @@ def get_current_period():
         "id": 0,
         "params": []
     })
-    response = requests.post("http://localhost:33035/", data=payload, headers=headers)
+    response = requests.post("http://localhost:33032/", data=payload, headers=headers)
     return response.json()['result']['last_slot']['period']
 
 def send_tx_list(tx_list):
@@ -29,25 +29,27 @@ def send_tx_list(tx_list):
         "id": 0,
         "params": [tx_list]
     })
-    return requests.post('http://localhost:33035/', data=payload, headers=headers)
+    return requests.post('http://localhost:33032/', data=payload, headers=headers)
 
 
-privkey_faucet = PrivateKey(privkey=base58.b58decode_check("2ubR6ErNAxMM8Q5ZEosmgMX5kEJFkKk2vKgdWWGscGRE8UfTB6"), raw=True)
+senderkey_faucet = KeyPair.from_secret_massa_encoded("S1EjXvHxZYJgmSqJscFq1SVsGTzsBdcCY6BomD6pVe4nzQ75M43c6p8XEhXzT44X45krzfcEM2p2g4R8MERf7QT4ruvDjhy")
+print(senderkey_faucet.get_secret_massa_encoded())
 
+def get_schnorr_pubkey(privkey):
+    return privkey.pubkey.serialize()[1:]
 
 def get_wallet(seed):
     np.random.seed(seed)
     wallet = [None] * 32
     address_in_all_thread = None not in wallet
     while not address_in_all_thread:
-        privkey = PrivateKey(np.random.bytes(32))
-        pubkey = get_schnorr_pubkey(privkey)
-        address = deduce_address(pubkey)
+        keypair = KeyPair.random()
+        address = deduce_address(keypair.public_key.to_bytes())
         thread = int(get_address_thread(address))
         if wallet[thread] is None:
             w = {
-                'private_key' : base58.b58encode_check(privkey.private_key).decode("utf-8"),
-                'public_key' : base58.b58encode_check(privkey.pubkey.serialize()).decode("utf-8"),
+                'private_key' : keypair.get_secret_massa_encoded(),
+                'public_key' : keypair.get_public_massa_encoded(),
                 'address' : address
                 }
             wallet[thread] = w
@@ -57,6 +59,8 @@ def get_wallet(seed):
 wallet = get_wallet(0)
 
 for i in range(32):
+    print("Address in thread", i, ":", wallet[i]["private_key"])
+    print("Address in thread", i, ":", wallet[i]["public_key"])
     print("Address in thread", i, ":", wallet[i]["address"])
 
 #print(get_balances([w["address"] for w in wallet]))
@@ -65,8 +69,8 @@ for i in range(32):
 def credit_wallet():
     tx_list = []
     for w in wallet:
-        sender_private_key = base58.b58encode_check(privkey_faucet.private_key)
-        sender_public_key = base58.b58encode_check(privkey_faucet.pubkey.serialize())
+        sender_private_key = senderkey_faucet.get_secret_massa_encoded()
+        sender_public_key = senderkey_faucet.get_public_massa_encoded()
         fee = 0
         print("getting period")
         expire_period = get_current_period() + 8
@@ -74,7 +78,9 @@ def credit_wallet():
         recipient_address = w["address"]
         amount = 10000 * 1000000000
         print("create tx")
-        tx_list.append(create_transaction(sender_private_key, sender_public_key, fee, expire_period, recipient_address, amount))
+        tx = create_transaction(sender_private_key, sender_public_key, fee, expire_period, recipient_address, amount)
+        print(tx)
+        tx_list.append(tx)
     print("sending...")
     print(send_tx_list(tx_list).json())
 

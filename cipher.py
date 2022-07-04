@@ -20,4 +20,4 @@ def encrypt(data: str):
     result.extend(encrypted)
     return result
 
-encrypt("a")
+print(base64.b64decode("qetr"))
