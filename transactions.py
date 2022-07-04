@@ -1,15 +1,15 @@
-from secp256k1 import PrivateKey, PublicKey
+from secp256k1 import PrivateKey
 import base58
 import varint
-import hashlib
+from blake3 import blake3
 
 
 def get_bytes_compact(transaction):
+    enc_sender_pub_key = base58.b58decode_check(transaction['content']['sender_public_key'])
     enc_fee = varint.encode(int(transaction['content']["fee"]))
     enc_expire_period = varint.encode(transaction['content']["expire_period"])
-    enc_sender_pub_key = base58.b58decode_check(transaction['content']['sender_public_key'])
     enc_type_id = varint.encode(0)
-    recipient_address = base58.b58decode_check(transaction['content']['op']['Transaction']["recipient_address"])
+    recipient_address = base58.b58decode_check(transaction['content']['op']['Transaction']["recipient_address"][1:])[1:]
     enc_amount = varint.encode(int(transaction['content']['op']['Transaction']['amount']))
     bytes_compact = enc_fee + enc_expire_period + enc_sender_pub_key + enc_type_id + recipient_address + enc_amount
     return bytes_compact
@@ -33,10 +33,14 @@ def sign_transaction(transaction, private_key):
     # Compute bytes compact
     encoded_data = get_bytes_compact(transaction)
 
-    # Hash and sign
+    # Hash
+    encoded_data = blake3(encoded_data).digest()
+
+    # Sign
     private_key = PrivateKey(privkey=base58.b58decode_check(private_key), raw=True)
-    signature = private_key.ecdsa_sign(encoded_data)
-    signature_b58 = base58.b58encode_check(private_key.ecdsa_serialize_compact(signature))
+    signature = private_key.schnorr_sign(encoded_data, bip340tag='', raw=True)
+    # signature_b58 = base58.b58encode_check(private_key.ecdsa_serialize_compact(signature))
+    signature_b58 = base58.b58encode_check(signature)
     return signature_b58
 
 
@@ -46,27 +50,24 @@ if __name__ == "main":
         "content": {
             "sender_public_key": "4vYrPNzUM8PKg2rYPW3ZnXPzy67j9fn5WsGCbnwAnk2Lf7jNHb",
             "fee": 1000,
-            # "fee": 300,
             "expire_period": 310010,
-            # "expire_period": 300,
             "op": {
                 "Transaction": {
                     "recipient_address": "2PoZqccygydkQfwdLXJEvgdsf4kRV2RmeYSupT1gcQ4kedBDcF",
                     "amount": 1000
-                    # "amount": 300
                 }
             }
         }
     }
 
-    from crypto import deduce_address
+    from crypto import deduce_address, get_schnorr_pubkey
 
     privkey = PrivateKey(privkey=base58.b58decode_check("LGXe9RrR1QNSsSn8bAEgrsYM8WwX67oHLjGj6e19bCW9ZKo6p"), raw=True)
-    pubkey = privkey.pubkey.serialize()
+    pubkey = get_schnorr_pubkey(privkey)
     address = deduce_address(pubkey)
 
     print("private_key", base58.b58encode_check(privkey.private_key))
-    print("public_key", base58.b58encode_check(privkey.pubkey.serialize()))
+    print("public_key", base58.b58encode_check(get_schnorr_pubkey(privkey)))
     print("address", deduce_address(pubkey))
 
     # Sign transaction

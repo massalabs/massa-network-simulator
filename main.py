@@ -6,6 +6,7 @@ from scenarios.blocks_transmission import block_transmission
 import json
 import time
 import threading
+import cipher
 
 containers = dict()
 
@@ -59,12 +60,15 @@ def main():
     nodes_data_str = json.dumps(nodes_data).encode("utf-8")
     genesis_timestamp = round(time.time() * 1000) + 10000
     for node_data in nodes_data:
+        keypair = {"secret_key": node_data["node_privkey"], "public_key": node_data["node_pubkey"]}
+        staking_keys = {node_data["address"]: {"secret_key": node_data["staking_privkey"], "public_key": node_data["node_pubkey"]}}
+        print(keypair)
         if node_data["bootstrap_server"] == True:
             container = container_wrapper.create_container(
                 files_dict={
                     "/nodes.json": nodes_data_str,
-                    "/massa/massa-node/config/node_privkey.key": (node_data["node_privkey"]).encode("utf-8"),
-                    "/massa/massa-node/config/staking_keys.json": ('["' + node_data["staking_privkey"] + '"]').encode("utf-8")
+                    "/massa/massa-node/config/node_privkey.key": json.dumps(keypair).encode("utf-8"),
+                    "/massa/massa-node/config/staking_keys.json": cipher.encrypt(json.dumps(staking_keys))
                 },
                 name="massa_node_"+node_data["ip"],
                 network=network,
