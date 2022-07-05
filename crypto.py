@@ -12,8 +12,8 @@ class KeyPair:
             self.public_key = public_key
     
     def random():
-        secret_key, public_key = ed25519.create_keypair()
-        return KeyPair(secret_key=secret_key, public_key=public_key)
+        signing_key, verifying_key = ed25519.create_keypair()
+        return KeyPair(secret_key=signing_key, public_key=verifying_key)
 
     def from_secret_massa_encoded(private: str):
         # Strip identifier
@@ -22,12 +22,12 @@ class KeyPair:
         private = base58.b58decode_check(private)
         # Decode varint
         version = varint.decode_bytes(private)
-        print(len(private))
         # Get rest (for the moment versions are little)
-        private = private[1:]
+        secret_key = private[1:]
         # decode privkey
-        private_key = ed25519.SigningKey(private)
-        return KeyPair(secret_key=private_key, public_key=private_key.get_verifying_key())
+        secret_key = ed25519.keys.SigningKey(secret_key)
+        public_key = secret_key.get_verifying_key()
+        return KeyPair(secret_key=secret_key, public_key=public_key)
 
     def get_public_massa_encoded(self):
         return 'P' + base58.b58encode_check(varint.encode(0) + self.public_key.to_bytes()).decode("utf-8")
@@ -39,10 +39,7 @@ def decode_pubkey_to_bytes(pubkey):
     return base58.b58decode_check(pubkey[1:])[1:]
 
 def deduce_address(pubkey):
-    return 'A' + base58.b58encode_check(varint.encode(0) + blake3(pubkey).digest()).decode("utf-8")
-
-def get_schnorr_pubkey(privkey):
-    return privkey.pubkey.serialize()[1:]
+    return 'A' + base58.b58encode_check(varint.encode(0) + blake3(pubkey.to_bytes()).digest()).decode("utf-8")
 
 def get_address_thread(address):
     address_bytes = base58.b58decode_check(address[1:])[1:]

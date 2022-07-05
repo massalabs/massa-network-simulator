@@ -32,11 +32,8 @@ def send_tx_list(tx_list):
     return requests.post('http://localhost:33032/', data=payload, headers=headers)
 
 
-senderkey_faucet = KeyPair.from_secret_massa_encoded("S1EjXvHxZYJgmSqJscFq1SVsGTzsBdcCY6BomD6pVe4nzQ75M43c6p8XEhXzT44X45krzfcEM2p2g4R8MERf7QT4ruvDjhy")
+senderkey_faucet = KeyPair.from_secret_massa_encoded("S129yYZnj3hrAsMW263uZitJKp9bBm1oF3Z4v2gqAf7KANQKAf2Q")
 print(senderkey_faucet.get_secret_massa_encoded())
-
-def get_schnorr_pubkey(privkey):
-    return privkey.pubkey.serialize()[1:]
 
 def get_wallet(seed):
     np.random.seed(seed)
@@ -44,7 +41,7 @@ def get_wallet(seed):
     address_in_all_thread = None not in wallet
     while not address_in_all_thread:
         keypair = KeyPair.random()
-        address = deduce_address(keypair.public_key.to_bytes())
+        address = deduce_address(keypair.public_key)
         thread = int(get_address_thread(address))
         if wallet[thread] is None:
             w = {
@@ -59,8 +56,6 @@ def get_wallet(seed):
 wallet = get_wallet(0)
 
 for i in range(32):
-    print("Address in thread", i, ":", wallet[i]["private_key"])
-    print("Address in thread", i, ":", wallet[i]["public_key"])
     print("Address in thread", i, ":", wallet[i]["address"])
 
 #print(get_balances([w["address"] for w in wallet]))
@@ -89,11 +84,11 @@ def create_one_tx(i, shift, expire_period):
     #i, shift, expire_period = args
     tau = np.random.randint(32)
     #print(tau)
-    privkey = PrivateKey(privkey=base58.b58decode_check(wallet[tau]["private_key"]), raw=True)
-    sender_private_key = base58.b58encode_check(privkey.private_key)
-    sender_public_key = base58.b58encode_check(privkey.pubkey.serialize())
+    keypair = KeyPair.from_secret_massa_encoded(wallet[tau]["private_key"])
+    sender_private_key = keypair.get_secret_massa_encoded()
+    sender_public_key = keypair.get_public_massa_encoded()
     fee = 0
-    recipient_address = "A13Fy75gXaoWhfEN6LH9cZc2R1dmDyALYLC8L5UFD7F2yu35oJr"
+    recipient_address = "A18dEoYk7mW2QXM19qmY7wqAjzqxC3mhVuhqhwCoueJzfvBMhLQ"
     amount = (i+1+shift) * 1
     return create_transaction(sender_private_key, sender_public_key, fee, expire_period, recipient_address, amount)
 

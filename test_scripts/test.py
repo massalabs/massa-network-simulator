@@ -31,10 +31,10 @@ def get_balances(addresses):
         "id": 0,
         "params": [addresses]
     })
-    response = requests.post("http://localhost:33032/", data=payload, headers=headers)
+    response = requests.post("http://localhost:33035/", data=payload, headers=headers)
     return response.json()
 
-#print(get_balances(["JBbufTa6AywQDeCWvm6oSeik5DhwRLN87uFYuCXx4i1o5isL3"]))
+#print(get_balances(["A12Gw8CZvASAkMxM5qZRwgwajDoLDsSZi6BpNPTnjyTRiMawe2Gc"]))
 
 def get_block(block_id):
     headers = {'Content-type': 'application/json'}
@@ -47,6 +47,8 @@ def get_block(block_id):
     response = requests.post("http://localhost:33032/", data=payload, headers=headers)
     return response.json()
 
+print(get_block("27xYdyGh6n8AoBUhpoJ8d8Sjcxd1ubmknHVKUb1JbiQTEEiSHW"))
+
 def get_cliques(address):
     headers = {'Content-type': 'application/json'}
     payload = json.dumps({
@@ -57,9 +59,9 @@ def get_cliques(address):
     })
     response = requests.post(address, data=payload, headers=headers)
     return response.json()
-a = get_cliques("http://localhost:33032/")["result"][0]["block_ids"]
-a.sort()
-print(a)
-b = get_cliques("http://localhost:33036/")["result"][0]["block_ids"]
-b.sort()
-print(b)
+# a = get_cliques("http://localhost:33032/")["result"][0]["block_ids"]
+# a.sort()
+# print(a)
+# b = get_cliques("http://localhost:33036/")["result"][0]["block_ids"]
+# b.sort()
+# print(b)

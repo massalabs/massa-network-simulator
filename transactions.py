@@ -3,6 +3,7 @@ import base58
 import varint
 from blake3 import blake3
 from crypto import KeyPair, decode_pubkey_to_bytes
+import ed25519
 
 def get_bytes_compact(content):
     enc_fee = varint.encode(int(content["fee"]))
@@ -26,7 +27,7 @@ def create_transaction(sender_private_key, creator_public_key, fee, expire_perio
     transaction = {}
     transaction["creator_public_key"] = creator_public_key
     transaction["signature"] = sign_transaction(transaction["creator_public_key"], content, sender_private_key).decode("utf-8")
-    transaction["serialized_content"] = get_bytes_compact(content).decode("utf-8")
+    transaction["serialized_content"] = list(get_bytes_compact(content))
     return transaction
 
 def sign_transaction(public_key, content, private_key):

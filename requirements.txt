@@ -7,4 +7,3 @@ varint
 pandas
 cryptography
 ed25519
-setuptools_rust
