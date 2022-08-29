@@ -7,7 +7,6 @@ CONFIG_PATH = f'{ROOT_PATH}/massa-node/base_config/config.toml'
 PEERS_PATH = f'{ROOT_PATH}/massa-node/base_config/initial_peers.json'
 NODE_INITIAL_LEDGER_PATH = f'{ROOT_PATH}/massa-node/base_config/initial_ledger.json'
 NODE_INITIAL_ROLLS_PATH = f'{ROOT_PATH}/massa-node/base_config/initial_rolls.json'
-NODE_INITIAL_SCE_LEDGER_PATH = f'{ROOT_PATH}/massa-node/base_config/initial_sce_ledger.json'
 NODES_PATH = f'/nodes.json'
 
 if __name__ == "__main__":
@@ -52,20 +51,13 @@ if __name__ == "__main__":
     with open(NODE_INITIAL_ROLLS_PATH, "w") as rolls_json_file:
         rolls_json_file.write(json.dumps(initial_rolls, indent=4))
     
-    #init sce ledger
-    initial_sce_ledger = {}
-    for node in nodes:
-        if node["initial_sce_ledger_balance"] > 0:
-            initial_sce_ledger[node["address"]] = str(node["initial_sce_ledger_balance"])
-
-    with open(NODE_INITIAL_SCE_LEDGER_PATH, "w") as initial_sce_ledger_json_file:
-        initial_sce_ledger_json_file.write(json.dumps(initial_sce_ledger, indent=4))
-
-    #init sce ledger
+    #init ledger
+    print("test")
     initial_ledger = {}
     for node in nodes:
-        if node["initial_ledger_balance"] > 0:
-            initial_ledger[node["address"]] = { "balance": str(node["initial_ledger_balance"]) }
+        if node["initial_ledger_sequential_balance"] > 0:
+            initial_ledger[node["address"]] = { "sequential_balance": str(node["initial_ledger_sequential_balance"]), "parallel_balance": str(node["initial_ledger_parallel_balance"]),  "datastore": {}, "bytecode": [] }
 
+    print(initial_ledger)
     with open(NODE_INITIAL_LEDGER_PATH, "w") as initial_ledger_json_file:
         initial_ledger_json_file.write(json.dumps(initial_ledger, indent=4))

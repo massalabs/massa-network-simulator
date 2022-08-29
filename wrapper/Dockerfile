@@ -26,7 +26,7 @@ COPY ./setup.py /setup.py
 ARG GIT_URL=https://github.com/massalabs/massa.git
 
 # clone the repo
-RUN git clone "$GIT_URL" massa
+RUN git clone "$GIT_URL" -b release_testnet_14 massa
 
 RUN python3 /setup.py
 
@@ -44,7 +44,6 @@ COPY ./config.py /config.py
 
 RUN echo "[]" > /massa/massa-node/base_config/initial_peers.json
 RUN echo "" > /massa/massa-node/base_config/initial_ledger.json
-RUN echo "" > /massa/massa-node/base_config/initial_sce_ledger.json
 RUN echo "" > /massa/massa-node/base_config/initial_rolls.json
 RUN apt install -y net-tools
 

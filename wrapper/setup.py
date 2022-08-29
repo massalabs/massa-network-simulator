@@ -1,7 +1,7 @@
 
 VERSION = "SIMU.0.0"
 ROOT_PATH = "massa"
-NODE_SETTINGS_PATH = f'{ROOT_PATH}/massa-models/src/node_configuration/default.rs'
+NODE_SETTINGS_PATH = f'{ROOT_PATH}/massa-models/src/config/constants.rs'
 
 with open(NODE_SETTINGS_PATH, 'r') as f:
     content = f.read()
