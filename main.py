@@ -28,7 +28,7 @@ def launch_node(container_wrapper, network, genesis_timestamp, nodes_data_str, n
             files_dict={
                 "/nodes.json": nodes_data_str,
                 "/massa/massa-node/config/node_privkey.key": json.dumps(keypair).encode("utf-8"),
-                "/massa/massa-node/config/staking_keys.json": cipher.encrypt(json.dumps(staking_keys))
+                "/massa/massa-node/config/staking_wallet.dat": cipher.encrypt(json.dumps(staking_keys))
             },
             name="massa_node_"+node_data["ip"],
             network=network,
@@ -69,7 +69,7 @@ def main():
                 files_dict={
                     "/nodes.json": nodes_data_str,
                     "/massa/massa-node/config/node_privkey.key": json.dumps(keypair).encode("utf-8"),
-                    "/massa/massa-node/config/staking_keys.json": cipher.encrypt(json.dumps(staking_keys))
+                    "/massa/massa-node/config/staking_wallet.dat": cipher.encrypt(json.dumps(staking_keys))
                 },
                 name="massa_node_"+node_data["ip"],
                 network=network,
