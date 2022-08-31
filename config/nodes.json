@@ -6,8 +6,8 @@
         "staking_privkey": "S1bXjyPwrssNmG4oUG5SEqaUhQkVArQi7rzQDWpCprTSmEgZDGG",
         "address": "A1sVmQZodxtyeFg1iCeoPMbtJVx1nfXf8YZALqCGMjaXSXMWzy7",
         "initial_rolls": 100,
-        "initial_ledger_balance": 250000000,
-        "initial_sce_ledger_balance": 100000000,
+        "initial_ledger_sequential_balance": 250000000,
+        "initial_ledger_parallel_balance": 250000000,
         "port": 33032,
         "bootstrap_server": true
     },
@@ -18,36 +18,10 @@
         "staking_privkey": "S1273BfFRp7B2ELtMLG4yibtad3QHgRTjJrNdD8LDUjS9mB2wQJM",
         "address": "A12Lkz8mEZ4uXPrzW9WDo5HKWRoYgeYjiQZMrwbjE6cPeRxuSfAG",
         "initial_rolls": 100,
-        "initial_ledger_balance": 250000000,
-        "initial_sce_ledger_balance": 100000000,
+        "initial_ledger_sequential_balance": 250000000,
+        "initial_ledger_parallel_balance": 250000000,
         "port": 33033,
         "launch_time_after_genesis": 60,
-        "bootstrap_server": false
-    },
-    {
-        "ip": "169.202.0.6",
-        "node_privkey": "S19wGyahJRR4oBo8pxgEqZCWADkUCQaBBCZwvdE9rZU3ACxx2CE",
-        "node_pubkey": "P1t88JJrBgdpg5zy9ufw4cRyBoesSdpx6fHs7QmT8wf1E7w2a7Q",
-        "staking_privkey": "S19wGyahJRR4oBo8pxgEqZCWADkUCQaBBCZwvdE9rZU3ACxx2CE",
-        "address": "A1d2J8N1JKdg7nY5yeW5VGjnsMKeZx6GvrmkDuPG1bQuJrFFfTk",
-        "initial_rolls": 100,
-        "initial_ledger_balance": 250000000,
-        "initial_sce_ledger_balance": 100000000,
-        "port": 33036,
-        "launch_time_after_genesis": 60,
-        "bootstrap_server": false
-    },
-    {
-        "ip": "169.202.0.11",
-        "node_privkey": "S12szMsJqWUNRJDsSXT3eCBWrsp4gjV19Xi5H13oYsCvaGBt2eVJ",
-        "node_pubkey": "P126qFRuXmRJ3HVHVEZ7CJzCJaMWPbzqrtniNkPS4p6r2ruiZTKr",
-        "staking_privkey": "S12szMsJqWUNRJDsSXT3eCBWrsp4gjV19Xi5H13oYsCvaGBt2eVJ",
-        "address": "A1238SHqARcspJYZsMpg12xNWGdYWcpowy1vb2QurBg1iJ6svMgJ",
-        "initial_rolls": 100,
-        "initial_ledger_balance": 250000000,
-        "initial_sce_ledger_balance": 100000000,
-        "port": 33041,
-        "launch_time_after_genesis": 60,
-        "bootstrap_server": false
-        }
+        "bootstrap_server": true
+    }
 ]

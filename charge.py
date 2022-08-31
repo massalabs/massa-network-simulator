@@ -32,7 +32,7 @@ def send_tx_list(tx_list):
     return requests.post('http://localhost:33032/', data=payload, headers=headers)
 
 
-senderkey_faucet = KeyPair.from_secret_massa_encoded("S129yYZnj3hrAsMW263uZitJKp9bBm1oF3Z4v2gqAf7KANQKAf2Q")
+senderkey_faucet = KeyPair.from_secret_massa_encoded("S1bXjyPwrssNmG4oUG5SEqaUhQkVArQi7rzQDWpCprTSmEgZDGG")
 print(senderkey_faucet.get_secret_massa_encoded())
 
 def get_wallet(seed):
@@ -63,15 +63,15 @@ for i in range(32):
 
 def credit_wallet():
     tx_list = []
+    print("getting period")
+    expire_period = get_current_period() + 8
+    print(expire_period)
+    sender_private_key = senderkey_faucet.get_secret_massa_encoded()
+    sender_public_key = senderkey_faucet.get_public_massa_encoded()
     for w in wallet:
-        sender_private_key = senderkey_faucet.get_secret_massa_encoded()
-        sender_public_key = senderkey_faucet.get_public_massa_encoded()
         fee = 0
-        print("getting period")
-        expire_period = get_current_period() + 8
-        print(expire_period)
         recipient_address = w["address"]
-        amount = 10000 * 1000000000
+        amount = 10000
         print("create tx")
         tx = create_transaction(sender_private_key, sender_public_key, fee, expire_period, recipient_address, amount)
         print(tx)
@@ -88,7 +88,7 @@ def create_one_tx(i, shift, expire_period):
     sender_private_key = keypair.get_secret_massa_encoded()
     sender_public_key = keypair.get_public_massa_encoded()
     fee = 0
-    recipient_address = "A18dEoYk7mW2QXM19qmY7wqAjzqxC3mhVuhqhwCoueJzfvBMhLQ"
+    recipient_address = "A1sVmQZodxtyeFg1iCeoPMbtJVx1nfXf8YZALqCGMjaXSXMWzy7"
     amount = (i+1+shift) * 1
     return create_transaction(sender_private_key, sender_public_key, fee, expire_period, recipient_address, amount)
 

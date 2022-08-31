@@ -26,7 +26,7 @@ COPY ./setup.py /setup.py
 ARG GIT_URL=https://github.com/massalabs/massa.git
 
 # clone the repo
-RUN git clone "$GIT_URL" -b release_testnet_14 massa
+RUN git clone "$GIT_URL" -b correct_protocol_storage massa
 
 RUN python3 /setup.py
 
