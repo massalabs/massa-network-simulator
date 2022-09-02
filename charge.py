@@ -18,7 +18,7 @@ def get_current_period():
         "id": 0,
         "params": []
     })
-    response = requests.post("http://localhost:33032/", data=payload, headers=headers)
+    response = requests.post("http://145.239.66.206:33035/", data=payload, headers=headers)
     return response.json()['result']['last_slot']['period']
 
 def send_tx_list(tx_list):
@@ -29,10 +29,10 @@ def send_tx_list(tx_list):
         "id": 0,
         "params": [tx_list]
     })
-    return requests.post('http://localhost:33032/', data=payload, headers=headers)
+    return requests.post('http://145.239.66.206:33035/', data=payload, headers=headers)
 
 
-senderkey_faucet = KeyPair.from_secret_massa_encoded("S1bXjyPwrssNmG4oUG5SEqaUhQkVArQi7rzQDWpCprTSmEgZDGG")
+senderkey_faucet = KeyPair.from_secret_massa_encoded("S1nDemFSELvbn67dKZBKNNu9ZmmSxY5jvRZmSKcK9AXc3Am8i4V")
 print(senderkey_faucet.get_secret_massa_encoded())
 
 def get_wallet(seed):
@@ -52,16 +52,8 @@ def get_wallet(seed):
             wallet[thread] = w
         address_in_all_thread = None not in wallet
     return wallet
-    
-wallet = get_wallet(0)
 
-for i in range(32):
-    print("Address in thread", i, ":", wallet[i]["address"])
-
-#print(get_balances([w["address"] for w in wallet]))
-
-
-def credit_wallet():
+def credit_wallet(wallet):
     tx_list = []
     print("getting period")
     expire_period = get_current_period() + 8
@@ -71,7 +63,7 @@ def credit_wallet():
     for w in wallet:
         fee = 0
         recipient_address = w["address"]
-        amount = 10000
+        amount = 10000 * 1000000000
         print("create tx")
         tx = create_transaction(sender_private_key, sender_public_key, fee, expire_period, recipient_address, amount)
         print(tx)
@@ -80,7 +72,7 @@ def credit_wallet():
     print(send_tx_list(tx_list).json())
 
 
-def create_one_tx(i, shift, expire_period):
+def create_one_tx(wallet, i, shift, expire_period):
     #i, shift, expire_period = args
     tau = np.random.randint(32)
     #print(tau)
@@ -88,13 +80,13 @@ def create_one_tx(i, shift, expire_period):
     sender_private_key = keypair.get_secret_massa_encoded()
     sender_public_key = keypair.get_public_massa_encoded()
     fee = 0
-    recipient_address = "A1sVmQZodxtyeFg1iCeoPMbtJVx1nfXf8YZALqCGMjaXSXMWzy7"
+    recipient_address = "A1XPwXaL1NsAd7zuCmEmSBrXzU6G3x7njadpVWbPLDjp1XZngwr"
     amount = (i+1+shift) * 1
     return create_transaction(sender_private_key, sender_public_key, fee, expire_period, recipient_address, amount)
 
 
 def send_thread(args):
-    worker, txps, global_shift = args
+    wallet, worker, txps, global_shift = args
     np.random.seed()
     expire_period = get_current_period() + 8
     batch_size = 100
@@ -109,7 +101,7 @@ def send_thread(args):
     while True:
         tx_list = []
         for i in range(batch_size):
-            tx_list.append(create_one_tx(i, shift, expire_period))
+            tx_list.append(create_one_tx(wallet, i, shift, expire_period))
         send_tx_list(tx_list)
         print("Worker", worker, "sent ", batch_size, "transactions")
         
@@ -126,19 +118,24 @@ def send_thread(args):
             shift += batch_size
 
 
-def bench(txps, global_shift):
+def bench(wallet, txps, global_shift):
     global_shift = global_shift * 200000
     workers = 20
     with Pool(workers) as p:
-        p.map(send_thread, [(i, txps/workers, global_shift + 10000*i) for i in range(workers)])
-
+        p.map(send_thread, [(wallet, i, txps/workers, global_shift + 10000*i) for i in range(workers)])
 
 if __name__ == "__main__":
     assert len(sys.argv) == 3
+    wallet = get_wallet(0)
+
+    for i in range(32):
+        print("Address in thread", i, ":", wallet[i]["address"])
+
     print("test")
     txps = int(sys.argv[1])
     global_shift = int(sys.argv[2]) # use different small integers (e.g. 1, 2, 3, 4) for different scripts (on same machine or different nodes)
     
-    credit_wallet()
-    
-    bench(txps, global_shift)
+    credit_wallet(wallet)
+    #tx_list = [create_one_tx(0, 0, get_current_period() + 8)]
+    #print(send_tx_list(tx_list).json())
+    bench(wallet, txps, global_shift)
