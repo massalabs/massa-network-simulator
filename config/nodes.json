@@ -1,6 +1,6 @@
 [ 
     {
-        "ip": "169.202.0.2",
+        "ip": "169.202.0.1",
         "node_privkey": "S1bXjyPwrssNmG4oUG5SEqaUhQkVArQi7rzQDWpCprTSmEgZDGG",
         "node_pubkey": "P124cEmdcfCQp1ATdf9NbZG4gmrkMQ7bgNtrWpKrTa2zQ5W6q4XN",
         "staking_privkey": "S1bXjyPwrssNmG4oUG5SEqaUhQkVArQi7rzQDWpCprTSmEgZDGG",
@@ -12,7 +12,7 @@
         "bootstrap_server": true
     },
     {
-        "ip": "169.202.0.3",
+        "ip": "169.202.0.2",
         "node_privkey": "S1273BfFRp7B2ELtMLG4yibtad3QHgRTjJrNdD8LDUjS9mB2wQJM",
         "node_pubkey": "P12LfRbXubSwU8uaCCxgSwBEN7k66VrVXvuczGz2RJcrbA7xtt9o",
         "staking_privkey": "S1273BfFRp7B2ELtMLG4yibtad3QHgRTjJrNdD8LDUjS9mB2wQJM",
