@@ -1,6 +1,6 @@
 import base64
 import os, binascii
-import Crypto
+import crypto
 from passlib.hash import pbkdf2_sha256
 import varint
 import hashlib

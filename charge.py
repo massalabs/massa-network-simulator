@@ -8,7 +8,6 @@ from multiprocessing import Pool
 
 from transactions import create_transaction
 from crypto import KeyPair, deduce_address, get_address_thread
-from secp256k1 import PrivateKey
 
 def get_current_period():
     headers = {'Content-type': 'application/json'}

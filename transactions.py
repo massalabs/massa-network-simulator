@@ -1,4 +1,3 @@
-from secp256k1 import PrivateKey
 import base58
 import varint
 from blake3 import blake3
