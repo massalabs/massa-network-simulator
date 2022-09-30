@@ -1,8 +1,10 @@
 docker
 toml
 base58
+blake3
+crypto
 numpy
-secp256k1
+passlib
 varint
 pandas
 cryptography
