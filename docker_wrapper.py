@@ -29,6 +29,7 @@ class DockerWrapper:
 
 class NetworkWrapper:
     def __init__(self, wrapper: DockerWrapper, subnet: str, gateway_ip: str):
+        self.id = None
         self.wrapper = wrapper
         self.network = self.wrapper.docker_client.networks.create(
             name="br0sim",
@@ -59,6 +60,9 @@ class NetworkWrapper:
 class ContainerWrapper:
     def __init__(self, wrapper: DockerWrapper, network: NetworkWrapper,
                  files_dict: dict, ul_kbitps: int, ul_ms: int, ip: str, cmd: list, environment: dict, ports: dict, name: str):
+
+        self.id = None
+
         result = wrapper.docker_client.containers.create(
             "massa-simulator",
             command=[str(ul_kbitps), str(ul_ms)] + cmd,
@@ -67,8 +71,8 @@ class ContainerWrapper:
             ports=ports,
             name=name,
             environment=environment,
-            security_opt=["seccomp:security.json"],
-            privileged=True
+            # security_opt=["seccomp:security.json"],
+            # privileged=True
         )
         print(ip)
         print(result.name)

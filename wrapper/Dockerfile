@@ -14,7 +14,7 @@ RUN pip3 install toml
 RUN apt install -y linux-perf
 RUN wget https://github.com/jonhoo/inferno/archive/refs/heads/master.zip
 RUN unzip master.zip
-RUN cd inferno-master/ && cargo build
+RUN cd inferno-main/ && cargo build
 
 #RUN mkdir -p /massa/target/release
 #RUN mkdir -p /massa/massa-node/
@@ -24,9 +24,10 @@ RUN cd inferno-master/ && cargo build
 COPY ./setup.py /setup.py
 
 ARG GIT_URL=https://github.com/massalabs/massa.git
+ARG GIT_BRANCH=main
 
 # clone the repo
-RUN git clone "$GIT_URL" -b correct_protocol_storage massa
+RUN git clone "$GIT_URL" -b $GIT_BRANCH massa
 
 RUN python3 /setup.py
 

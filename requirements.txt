@@ -9,3 +9,7 @@ varint
 pandas
 cryptography
 ed25519
+pycrypto
+passlib
+blake3
+requests

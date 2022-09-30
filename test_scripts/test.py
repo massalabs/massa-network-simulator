@@ -1,5 +1,6 @@
 import json
 import requests
+from typing import List
 
 def get_current_period():
     headers = {'Content-type': 'application/json'}
@@ -59,6 +60,18 @@ def get_block(block_id):
     return response.json()
 
 print(get_block("cSM1G54iswwCgKnrafFNgeA5ueFH16jpv1VRPjAQKx1xU2Z8z"))
+
+def get_endorsements(endorsement_ids: List[str], url="http://localhost:33033/"):
+    headers = {'Content-type': 'application/json'}
+    payload = json.dumps({
+        "jsonrpc": "2.0",
+        "method": "get_endorsements",
+        "id": 0,
+        "params": [endorsement_ids]
+    })
+    response = requests.post(url, data=payload, headers=headers)
+    return response.json()
+
 
 def get_cliques(address):
     headers = {'Content-type': 'application/json'}

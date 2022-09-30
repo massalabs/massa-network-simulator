@@ -13,14 +13,47 @@ Use Docker to simulate a P2P network. You can simulate the Massa network on your
 ## Installation
 
 Need docker, git and python3.
+
+Setup:
+
+````
+python3 -m venv venv
+venv/bin/python -m pip install -r requirements.txt
+````
+
+Edit wrapper/Dockerfile and change the following lines:
+* ARG GIT_BRANCH="main" # change with the branch you'd like to test
+
 Build docker image :
 ```
 cd wrapper && docker build -t massa-simulator .
 ```
+
 Launch the simulator :
 ```
-python3 main.py
+venv/bin/python main.py
 ```
+
+### Podman
+
+In order to use Podman (~ rootless Docker):
+
+`
+sudo apt install podman podman-docker
+`
+
+Edit the following file:
+* `/etc/containers/registries.conf`
+* Add the following line (at the end):
+  * `unqualified-search-registries = ["docker.io"]`
+
+Test installation:
+* `docker -v`
+  * `Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+     podman version 3.4.4`
+
+In order to laucnh the simulator, you can have to define the DOCKER_HOST env var:
+* `DOCKER_HOST=unix:///run/user/$uid/podman/podman.sock venv/bin/python3 main.py`
 
 ----
 ## Configuration
@@ -56,6 +89,8 @@ To get your private key/public key and address use the massa client a run `walle
 ## Charge network
 
 To add charge to the network you can use the script `charge.py` that will create 32 accounts and provide them money to make a load of operations.
+
+venv/bin/python 
 
 ---
 ## Monitoring network
