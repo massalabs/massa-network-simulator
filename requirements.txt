@@ -2,14 +2,12 @@ docker
 toml
 base58
 blake3
-crypto
 numpy
 passlib
 varint
 pandas
-cryptography
+pycryptodome
 ed25519
-pycrypto
 passlib
 blake3
 requests
