@@ -80,7 +80,7 @@ def create_one_tx(wallet, i, shift, expire_period):
     sender_private_key = keypair.get_secret_massa_encoded()
     sender_public_key = keypair.get_public_massa_encoded()
     fee = 0
-    recipient_address = "A1XPwXaL1NsAd7zuCmEmSBrXzU6G3x7njadpVWbPLDjp1XZngwr"
+    recipient_address = "A1qDAxGJ387ETi9JRQzZWSPKYq4YPXrFvdiE4VoXUaiAt38JFEC"
     amount = (i+1+shift) * 1
     return create_transaction(sender_private_key, sender_public_key, fee, expire_period, recipient_address, amount)
 
