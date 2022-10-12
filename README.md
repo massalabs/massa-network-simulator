@@ -53,7 +53,11 @@ Test installation:
      podman version 3.4.4`
 
 In order to laucnh the simulator, you can have to define the DOCKER_HOST env var:
-* `DOCKER_HOST=unix:///run/user/$uid/podman/podman.sock venv/bin/python3 main.py`
+* `DOCKER_HOST=unix:///run/user/1000/podman/podman.sock venv/bin/python3 main.py`
+
+or better:
+
+* `DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock venv/bin/python3 main.py`
 
 ----
 ## Configuration
@@ -90,13 +94,28 @@ To get your private key/public key and address use the massa client a run `walle
 
 To add charge to the network you can use the script `charge.py` that will create 32 accounts and provide them money to make a load of operations.
 
-venv/bin/python 
+`
+venv/bin/python TXPS SHIFT 
+`
+
+where:
+* TXPS: Number of transaction per seconds (send by batch of 100)
+* SHIFT: Used for the amount in transactions
 
 ---
 ## Monitoring network
 
 Logs are available in folder `logs/` when running a network. The is one file by node identified by their IP address in the sub network.
 
+---
+## Debug
+
+* `docker container ls`
+* `docker exec -it massa_node_169_202_0_1 bash`
+
+### Troubleshooting
+
+* `docker network rm -f br0sim`
 
 ### Next steps :
 
