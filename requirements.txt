@@ -6,7 +6,7 @@ numpy
 passlib
 varint
 pandas
-pycryptodome
+cryptography
 ed25519
 passlib
 blake3
