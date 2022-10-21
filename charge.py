@@ -31,7 +31,7 @@ def send_tx_list(tx_list):
     return requests.post('http://145.239.66.206:33035/', data=payload, headers=headers)
 
 
-senderkey_faucet = KeyPair.from_secret_massa_encoded("S1nDemFSELvbn67dKZBKNNu9ZmmSxY5jvRZmSKcK9AXc3Am8i4V")
+senderkey_faucet = KeyPair.from_secret_massa_encoded("S1NA786im4CFL5cHSmsGkGZFEPxqvgaRP8HXyThQSsVnWj4tR7d")
 print(senderkey_faucet.get_secret_massa_encoded())
 
 def get_wallet(seed):
@@ -79,7 +79,7 @@ def create_one_tx(wallet, i, shift, expire_period):
     sender_private_key = keypair.get_secret_massa_encoded()
     sender_public_key = keypair.get_public_massa_encoded()
     fee = 0
-    recipient_address = "A1XPwXaL1NsAd7zuCmEmSBrXzU6G3x7njadpVWbPLDjp1XZngwr"
+    recipient_address = "A12irbDfYNwyZRbnpBrfCBPCxrktp8f8riK2sQddWbzQ3g43G7bb"
     amount = (i+1+shift) * 1
     return create_transaction(sender_private_key, sender_public_key, fee, expire_period, recipient_address, amount)
 
