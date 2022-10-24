@@ -56,7 +56,13 @@ if __name__ == "__main__":
     initial_ledger = {}
     for node in nodes:
         if node["initial_ledger_sequential_balance"] > 0:
-            initial_ledger[node["address"]] = { "sequential_balance": str(node["initial_ledger_sequential_balance"]), "parallel_balance": str(node["initial_ledger_parallel_balance"]),  "datastore": {}, "bytecode": [] }
+            initial_ledger[node["address"]] = {
+                "sequential_balance": str(node["initial_ledger_sequential_balance"]),
+                "parallel_balance": str(node["initial_ledger_parallel_balance"]),
+                "balance": str(node["initial_ledger_parallel_balance"]),
+                "datastore": {},
+                "bytecode": []
+            }
 
     print(initial_ledger)
     with open(NODE_INITIAL_LEDGER_PATH, "w") as initial_ledger_json_file:
