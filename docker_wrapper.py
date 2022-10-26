@@ -11,6 +11,7 @@ class DockerWrapper:
     def __init__(self):
         self.docker_client = docker.from_env()
         self.containers = []
+        self.low_level_client = docker.APIClient()
 
     def create_network(self, subnet: str, gateway_ip: str):
         return NetworkWrapper(self, subnet, gateway_ip)
@@ -25,6 +26,10 @@ class DockerWrapper:
         for itm in self.containers:
             itm.delete()
         self.containers.clear()
+	
+    def prune_networks_and_containers(self):
+        self.low_level_client.prune_networks()
+        self.low_level_client.prune_containers()
 
 
 class NetworkWrapper:
