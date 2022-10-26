@@ -48,8 +48,13 @@ def launch_node(container_wrapper, network, genesis_timestamp, nodes_data_str, n
 
 def main():
     global containers
-    print("Initializing...")
+    
     container_wrapper = ContainerWrapper()
+	
+    print("Pruning existing networks and containers...")
+    container_wrapper.prune_networks_and_containers()
+    
+    print("Initializing...")
     network = container_wrapper.create_network(
         subnet="169.202.0.0/16",
         gateway_ip="169.202.0.254"
