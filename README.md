@@ -22,6 +22,10 @@ venv/bin/python -m pip install --upgrade pip
 venv/bin/python -m pip install -r requirements.txt
 ````
 
+If you are on Apple Silicon and run into an `ImportError: dlopen` related to the OpenSSL bindings of the `cryptography` package,
+we recommend [uninstalling](https://github.com/homebrew/install#uninstall-homebrew) and re-installing Homebrew, 
+and switching to using [Pyenv](https://github.com/pyenv/pyenv) for managing your Python installations.
+
 Edit wrapper/Dockerfile and change the following lines:
 * ARG GIT_BRANCH="main" # change with the branch you'd like to test
 
